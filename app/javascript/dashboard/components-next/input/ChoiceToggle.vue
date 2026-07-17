@@ -35,7 +35,7 @@ const handleSelect = value => {
           type="radio"
           :value="option.value"
           :checked="modelValue === option.value"
-          class="size-4 accent-n-blue-9 text-n-blue-9"
+          class="size-4 accent-n-brand text-n-brand"
           @change="handleSelect(option.value)"
         />
         <span class="text-sm text-n-slate-12">{{ option.label }}</span>

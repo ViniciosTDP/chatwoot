@@ -278,15 +278,15 @@ const handleToggleWidget = () => {
   --solid-3: 255 255 255;
   --solid-active: 255 255 255;
   --solid-amber: 252 232 193;
-  --solid-blue: 218 236 255;
-  --solid-iris: 230 231 255;
+  --solid-blue: 244 235 225;
+  --solid-iris: 244 235 225;
 
   --alpha-1: 67, 67, 67, 0.06;
   --alpha-2: 201, 202, 207, 0.15;
   --alpha-3: 255, 255, 255, 0.96;
   --black-alpha-1: 0, 0, 0, 0.12;
   --black-alpha-2: 0, 0, 0, 0.04;
-  --border-blue: 39, 129, 246, 0.5;
+  --border-blue: 208, 148, 75, 0.5;
   --white-alpha: 255, 255, 255, 0.8;
 }
 
@@ -313,8 +313,8 @@ const handleToggleWidget = () => {
   --solid-3: 44 45 54;
   --solid-active: 53 57 66;
   --solid-amber: 42 37 30;
-  --solid-blue: 16 49 91;
-  --solid-iris: 38 42 101;
+  --solid-blue: 96 67 32;
+  --solid-iris: 96 67 32;
   --text-blue: 126 182 255;
 
   --alpha-1: 36, 36, 36, 0.8;
@@ -322,7 +322,7 @@ const handleToggleWidget = () => {
   --alpha-3: 36, 38, 45, 0.9;
   --black-alpha-1: 0, 0, 0, 0.3;
   --black-alpha-2: 0, 0, 0, 0.2;
-  --border-blue: 39, 129, 246, 0.5;
+  --border-blue: 208, 148, 75, 0.5;
   --border-container: 236, 236, 236, 0;
   --white-alpha: 255, 255, 255, 0.1;
 }

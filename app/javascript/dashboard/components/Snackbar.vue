@@ -29,7 +29,7 @@ export default {
         <router-link
           v-if="action.type == 'link'"
           :to="action.to"
-          class="font-medium cursor-pointer select-none text-n-blue-10 hover:text-n-brand"
+          class="font-medium cursor-pointer select-none text-n-brand hover:text-n-brand/80"
         >
           {{ action.message }}
         </router-link>
