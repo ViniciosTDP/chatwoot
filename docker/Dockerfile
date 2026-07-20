@@ -86,8 +86,9 @@ RUN if [ "$RAILS_ENV" = "production" ]; then \
   && rm -rf spec node_modules tmp/cache; \
   fi
 
-# Generate .git_sha file with current commit hash
-RUN git rev-parse HEAD > /app/.git_sha
+# Generate .git_sha file with current commit hash (.git may be excluded from build context)
+ARG GIT_SHA=inpera-prod
+RUN (git rev-parse HEAD 2>/dev/null || echo "$GIT_SHA") > /app/.git_sha
 
 # Remove unnecessary files
 RUN rm -rf /gems/ruby/3.4.0/cache/*.gem \

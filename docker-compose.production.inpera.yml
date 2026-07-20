@@ -1,0 +1,133 @@
+# Chatwoot Inpera — production stack tuned for ~1 GB RAM VPS (test/homolog).
+# Build the image OFF the VPS, then: gunzip -c chatwoot-inpera-prod.tar.gz | docker load
+# Usage on VPS:
+#   docker-compose -f docker-compose.production.inpera.yml up -d
+#
+# Compose file format 2.4: mem_limit works without Swarm (docker-compose 1.25+).
+
+version: '2.4'
+
+services:
+  rails:
+    image: chatwoot-inpera:prod
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-0}
+      - RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
+      - SIDEKIQ_CONCURRENCY=${SIDEKIQ_CONCURRENCY:-2}
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    volumes:
+      - storage_data:/app/storage
+      # Override image scripts if built from a Windows checkout with CRLF
+      - ./docker/entrypoints:/app/docker/entrypoints:ro
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '3000:3000'
+    restart: always
+    mem_limit: 320m
+    memswap_limit: 640m
+
+  sidekiq:
+    image: chatwoot-inpera:prod
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-0}
+      - RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
+      - SIDEKIQ_CONCURRENCY=${SIDEKIQ_CONCURRENCY:-2}
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    volumes:
+      - storage_data:/app/storage
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+    mem_limit: 320m
+    memswap_limit: 640m
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: always
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-evolution-db.sql:/docker-entrypoint-initdb.d/01-init-evolution-db.sql:ro
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE:-chatwoot}
+      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - effective_cache_size=128MB
+      - -c
+      - max_connections=50
+    mem_limit: 192m
+    memswap_limit: 384m
+
+  redis:
+    image: redis:alpine
+    restart: always
+    command:
+      - sh
+      - -c
+      - redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 48mb --maxmemory-policy allkeys-lru
+    env_file: .env
+    volumes:
+      - redis_data:/data
+    ports:
+      - '127.0.0.1:6379:6379'
+    mem_limit: 64m
+    memswap_limit: 128m
+
+  evolution:
+    image: evoapicloud/evolution-api:v2.3.7
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8080:8080'
+    environment:
+      - SERVER_URL=${EVOLUTION_API_PUBLIC_URL:-http://192.159.110.58:8080}
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://evolution:${EVOLUTION_DB_PASSWORD:-evolution_change_me}@postgres:5432/evolution?schema=public
+      - DATABASE_CONNECTION_CLIENT_NAME=chatwoot_evolution
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
+      - DATABASE_SAVE_MESSAGE_UPDATE=true
+      - DATABASE_SAVE_DATA_CONTACTS=true
+      - DATABASE_SAVE_DATA_CHATS=true
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://:${REDIS_PASSWORD}@redis:6379/2
+      - CACHE_REDIS_PREFIX_KEY=evolution
+      - CACHE_LOCAL_ENABLED=false
+      - LOG_LEVEL=ERROR,WARN,INFO
+      - WPP_LID_MODE=false
+    volumes:
+      - evolution_instances:/evolution/instances
+    mem_limit: 192m
+    memswap_limit: 384m
+
+volumes:
+  storage_data:
+  postgres_data:
+  redis_data:
+  evolution_instances:

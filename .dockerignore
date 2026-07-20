@@ -1,6 +1,7 @@
 .bundle
 .env
 .env.*
+!.env.production.inpera.example
 docker-compose.*
 docker/Dockerfile
 docker/dockerfiles
@@ -15,3 +16,16 @@ vendor/bundle
 .DS_Store
 *.swp
 *~
+.git
+graphify-out
+.cursor
+.github
+spec
+coverage
+histoire
+**/*.md
+!VERSION_CW
+!VERSION_CWCTL
+agent-transcripts
+*.tar
+*.tar.gz
