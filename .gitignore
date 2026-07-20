@@ -104,3 +104,9 @@ CLAUDE.local.md
 .pnpm-store/*
 local/
 Procfile.worktree
+
+# Graphify (local only)
+graphify-out/
+.gitattributes
+
+.env.docker
