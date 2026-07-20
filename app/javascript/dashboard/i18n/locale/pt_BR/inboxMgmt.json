@@ -247,11 +247,13 @@
           "WHATSAPP_CLOUD": "Cloud do WhatsApp",
           "WHATSAPP_CLOUD_DESC": "Configuração rápida via Meta",
           "TWILIO_DESC": "Conectar através de credenciais Twilio",
-          "360_DIALOG": "360Dialog"
+          "360_DIALOG": "360Dialog",
+          "EVOLUTION": "Evolution API",
+          "EVOLUTION_DESC": "WhatsApp self-hosted via Evolution API"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Selecione seu provedor de API",
-          "DESCRIPTION": "Escolha seu provedor do WhatsApp. Você pode se conectar diretamente através de metade, que não requer nenhuma configuração ou se conectar pelo Twilio usando as credenciais da sua conta."
+          "DESCRIPTION": "Escolha seu provedor do WhatsApp: Meta, Twilio ou Evolution API."
         },
         "INBOX_NAME": {
           "LABEL": "Nome da Caixa de Entrada",
@@ -289,6 +291,30 @@
           "SUBTITLE": "Você deve configurar a URL do webhook e o token de verificação no portal do desenvolvedor do Facebook com os valores mostrados abaixo.",
           "WEBHOOK_URL": "URL do Webhook",
           "WEBHOOK_VERIFICATION_TOKEN": "Token de verificação Webhook"
+        },
+        "EVOLUTION": {
+          "API_URL": {
+            "LABEL": "URL da Evolution API",
+            "PLACEHOLDER": "http://localhost:8080",
+            "ERROR": "Informe uma URL válida da Evolution API."
+          },
+          "API_KEY": {
+            "LABEL": "Chave da Evolution API",
+            "PLACEHOLDER": "AUTHENTICATION_API_KEY do docker-compose",
+            "ERROR": "Informe uma API key válida.",
+            "HINT": "Use a AUTHENTICATION_API_KEY da Evolution (no compose local: chatwoot_evolution_dev_key). Não use o token de uma instância."
+          },
+          "DOCKER_HINT": "Em desenvolvimento Docker, a URL e a API key vêm do compose (EVOLUTION_API_URL / EVOLUTION_API_KEY). Basta informar nome da inbox e telefone.",
+          "CONNECTION": {
+            "TITLE": "Conectar WhatsApp (Evolution)",
+            "CONNECTED": "WhatsApp conectado.",
+            "WAITING_QR": "Escaneie o QR Code com o WhatsApp para conectar.",
+            "DISCONNECTED": "WhatsApp desconectado.",
+            "SCAN_HINT": "Abra o WhatsApp no celular → Aparelhos conectados → Conectar um aparelho e escaneie este QR Code.",
+            "RECONNECT": "Gerar novo QR Code",
+            "RECONNECT_ERROR": "Não foi possível atualizar o QR Code. Tente novamente.",
+            "INSTANCE": "Instância: {name}"
+          }
         },
         "SUBMIT_BUTTON": "Criar canal do WhatsApp",
         "EMBEDDED_SIGNUP": {

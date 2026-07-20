@@ -107,6 +107,18 @@ FactoryBot.define do
         default_config['source'] = 'embedded_signup' unless channel_whatsapp.provider_config.key?('source')
         channel_whatsapp.provider_config = channel_whatsapp.provider_config.merge(default_config)
       end
+      if channel_whatsapp.provider == 'evolution_api'
+        existing = channel_whatsapp.provider_config || {}
+        channel_whatsapp.provider_config = {
+          'api_url' => existing['api_url'].presence || 'http://evolution.test',
+          'api_key' => (existing['api_key'].presence if existing['api_key'] != 'test_key') || 'test_evolution_key',
+          'instance_name' => existing['instance_name'].presence || 'cw-test-instance',
+          'webhook_token' => existing['webhook_token'].presence || 'test_token',
+          'connection_status' => existing['connection_status'].presence || 'created'
+        }
+        channel_whatsapp.define_singleton_method(:setup_webhooks) { nil }
+        channel_whatsapp.define_singleton_method(:teardown_webhooks) { nil }
+      end
     end
 
     after(:create) do |channel_whatsapp|

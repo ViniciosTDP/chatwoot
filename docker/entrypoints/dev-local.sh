@@ -7,6 +7,15 @@ if [ -f .env.docker ]; then
   cp -f .env.docker .env
 fi
 
+# Compose `environment:` wins over .env.docker — keep .env in sync so Dotenv never
+# downgrades EVOLUTION_API_URL to localhost inside the app container.
+if [ -n "${EVOLUTION_API_URL:-}" ]; then
+  sed -i "s|^EVOLUTION_API_URL=.*|EVOLUTION_API_URL=${EVOLUTION_API_URL}|" .env
+fi
+if [ -n "${EVOLUTION_API_KEY:-}" ]; then
+  sed -i "s|^EVOLUTION_API_KEY=.*|EVOLUTION_API_KEY=${EVOLUTION_API_KEY}|" .env
+fi
+
 echo "==> Aguardando Postgres em ${POSTGRES_HOST:-postgres}..."
 until pg_isready -h "${POSTGRES_HOST}" -p 5432 -U "${POSTGRES_USERNAME:-postgres}" >/dev/null 2>&1; do
   sleep 2

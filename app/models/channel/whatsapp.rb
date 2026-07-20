@@ -16,7 +16,6 @@
 #
 #  index_channel_whatsapp_on_phone_number  (phone_number) UNIQUE
 #
-
 class Channel::Whatsapp < ApplicationRecord
   include Channelable
   include Reauthorizable
@@ -25,8 +24,9 @@ class Channel::Whatsapp < ApplicationRecord
   EDITABLE_ATTRS = [:phone_number, :provider, { provider_config: {} }].freeze
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud].freeze
+  PROVIDERS = %w[default whatsapp_cloud evolution_api].freeze
   before_validation :ensure_webhook_verify_token
+  before_validation :ensure_evolution_provider_defaults, if: -> { provider == 'evolution_api' }
 
   validates :provider, inclusion: { in: PROVIDERS }
   validates :phone_number, presence: true, uniqueness: true
@@ -63,8 +63,11 @@ class Channel::Whatsapp < ApplicationRecord
   end
 
   def provider_service
-    if provider == 'whatsapp_cloud'
+    case provider
+    when 'whatsapp_cloud'
       Whatsapp::Providers::WhatsappCloudService.new(whatsapp_channel: self)
+    when 'evolution_api'
+      Whatsapp::Providers::WhatsappEvolutionService.new(whatsapp_channel: self)
     else
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
     end
@@ -120,10 +123,28 @@ class Channel::Whatsapp < ApplicationRecord
     prompt_reauthorization!
   end
 
+  def evolution_instance_service
+    Whatsapp::Evolution::InstanceManageService.new(whatsapp_channel: self)
+  end
+
   private
 
   def ensure_webhook_verify_token
     provider_config['webhook_verify_token'] ||= SecureRandom.hex(16) if provider == 'whatsapp_cloud'
+  end
+
+  def ensure_evolution_provider_defaults
+    # Reassign the whole hash — in-place JSONB mutations are unreliable in ActiveRecord.
+    config = (provider_config || {}).to_h.deep_stringify_keys
+
+    # Docker/local: always prefer compose env so localhost from the UI never breaks Rails.
+    config['api_url'] = ENV['EVOLUTION_API_URL'].presence || config['api_url'].presence
+    config['api_key'] = ENV['EVOLUTION_API_KEY'].presence || config['api_key'].presence
+
+    config['instance_name'] ||= "cw-#{account_id}-#{SecureRandom.hex(4)}"
+    config['webhook_token'] ||= SecureRandom.hex(16)
+    config['connection_status'] ||= 'created'
+    self.provider_config = config
   end
 
   def validate_provider_config
@@ -140,7 +161,11 @@ class Channel::Whatsapp < ApplicationRecord
   end
 
   def perform_webhook_setup
-    webhook_setup_service.perform
+    if provider == 'evolution_api'
+      evolution_instance_service.create_instance_and_configure!
+    else
+      webhook_setup_service.perform
+    end
   end
 
   def webhook_setup_service
@@ -148,12 +173,18 @@ class Channel::Whatsapp < ApplicationRecord
   end
 
   def teardown_webhooks
-    Whatsapp::WebhookTeardownService.new(self).perform
+    if provider == 'evolution_api'
+      evolution_instance_service.delete_instance!
+    else
+      Whatsapp::WebhookTeardownService.new(self).perform
+    end
   end
 
   def should_auto_setup_webhooks?
     # Only auto-setup webhooks for whatsapp_cloud provider with manual setup
     # Embedded signup calls setup_webhooks explicitly in EmbeddedSignupService
+    return true if provider == 'evolution_api'
+
     provider == 'whatsapp_cloud' && provider_config['source'] != 'embedded_signup'
   end
 end

@@ -6,12 +6,21 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
   end
 
   def perform_reply
+    if evolution_provider?
+      send_session_message
+      return
+    end
+
     should_send_template_message = template_params.present? || !message.conversation.can_reply?
     if should_send_template_message
       send_template_message
     else
       send_session_message
     end
+  end
+
+  def evolution_provider?
+    channel.provider == 'evolution_api'
   end
 
   def send_template_message

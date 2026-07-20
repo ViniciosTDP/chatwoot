@@ -11,6 +11,7 @@ import { required } from '@vuelidate/validators';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import TextArea from 'next/textarea/TextArea.vue';
 import { sanitizeAllowedDomains } from 'dashboard/helper/URLHelper';
+import EvolutionConnection from '../channels/EvolutionConnection.vue';
 
 export default {
   components: {
@@ -21,6 +22,7 @@ export default {
     SmtpSettings,
     NextButton,
     TextArea,
+    EvolutionConnection,
   },
   mixins: [inboxMixin],
   props: {
@@ -347,7 +349,11 @@ export default {
     <SmtpSettings v-if="inbox.imap_enabled" :inbox="inbox" />
   </div>
   <div v-else-if="isAWhatsAppChannel && !isATwilioChannel">
-    <div v-if="inbox.provider_config">
+    <EvolutionConnection
+      v-if="isAnEvolutionWhatsAppChannel"
+      :inbox-id="inbox.id"
+    />
+    <div v-else-if="inbox.provider_config">
       <!-- Embedded Signup Section -->
       <template v-if="isEmbeddedSignupWhatsApp">
         <SettingsFieldSection

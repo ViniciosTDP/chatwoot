@@ -8,6 +8,7 @@ import EmptyState from '../../../../components/widgets/EmptyState.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import DuplicateInboxBanner from './channels/instagram/DuplicateInboxBanner.vue';
 import EmailInboxFinish from './channels/emailChannels/EmailInboxFinish.vue';
+import EvolutionConnection from './channels/EvolutionConnection.vue';
 import { useInbox } from 'dashboard/composables/useInbox';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 
@@ -36,6 +37,7 @@ const {
   isAFacebookInbox,
   isATelegramChannel,
   isATwilioWhatsAppChannel,
+  isAnEvolutionWhatsAppChannel,
 } = useInbox(route.params.inbox_id);
 
 const hasDuplicateInstagramInbox = computed(() => {
@@ -94,6 +96,12 @@ const message = computed(() => {
   if (isWhatsAppEmbeddedSignup.value) {
     return `${t('INBOX_MGMT.FINISH.MESSAGE')}. ${t(
       'INBOX_MGMT.FINISH.WHATSAPP_QR_INSTRUCTION'
+    )}`;
+  }
+
+  if (isAnEvolutionWhatsAppChannel.value) {
+    return `${t('INBOX_MGMT.FINISH.MESSAGE')}. ${t(
+      'INBOX_MGMT.ADD.WHATSAPP.EVOLUTION.CONNECTION.SCAN_HINT'
     )}`;
   }
 
@@ -230,7 +238,13 @@ onMounted(() => {
           :inbox-id="$route.params.inbox_id"
         />
         <div
-          v-if="isAWhatsAppChannel && qrCodes.whatsapp"
+          v-if="isAnEvolutionWhatsAppChannel"
+          class="w-[70%] max-w-[70%] ml-[15%]"
+        >
+          <EvolutionConnection :inbox-id="route.params.inbox_id" />
+        </div>
+        <div
+          v-if="isAWhatsAppChannel && !isAnEvolutionWhatsAppChannel && qrCodes.whatsapp"
           class="flex flex-col gap-3 items-center mt-8"
         >
           <p class="mt-2 text-sm text-n-slate-9">

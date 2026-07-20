@@ -2,7 +2,7 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     ports:
-      - '5432:5432'
+      - '5433:5432'
     environment:
       POSTGRES_DB: chatwoot
       POSTGRES_USER: postgres
@@ -26,6 +26,53 @@ services:
       timeout: 5s
       retries: 5
 
+  evolution_postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5434:5432'
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: evolution
+    volumes:
+      - evolution_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U evolution -d evolution']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  evolution:
+    image: evoapicloud/evolution-api:v2.3.7
+    restart: unless-stopped
+    depends_on:
+      evolution_postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    environment:
+      SERVER_URL: http://localhost:8080
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:-chatwoot_evolution_dev_key}
+      DATABASE_ENABLED: 'true'
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION_URI: postgresql://evolution:evolution@evolution_postgres:5432/evolution?schema=public
+      DATABASE_CONNECTION_CLIENT_NAME: chatwoot_evolution
+      DATABASE_SAVE_DATA_INSTANCE: 'true'
+      DATABASE_SAVE_DATA_NEW_MESSAGE: 'true'
+      DATABASE_SAVE_MESSAGE_UPDATE: 'true'
+      DATABASE_SAVE_DATA_CONTACTS: 'true'
+      DATABASE_SAVE_DATA_CHATS: 'true'
+      CACHE_REDIS_ENABLED: 'true'
+      CACHE_REDIS_URI: redis://redis:6379/2
+      CACHE_REDIS_PREFIX_KEY: evolution
+      CACHE_LOCAL_ENABLED: 'false'
+      LOG_LEVEL: ERROR,WARN,INFO
+      WPP_LID_MODE: 'false'
+    volumes:
+      - evolution_instances:/evolution/instances
+
   app:
     build:
       context: .
@@ -37,11 +84,17 @@ services:
       REDIS_URL: redis://redis:6379
       VITE_DEV_SERVER_HOST: 0.0.0.0
       FRONTEND_URL: http://localhost:3000
+      EVOLUTION_API_URL: http://evolution:8080
+      EVOLUTION_API_PUBLIC_URL: http://localhost:8080
+      EVOLUTION_API_KEY: ${EVOLUTION_API_KEY:-chatwoot_evolution_dev_key}
+      EVOLUTION_WEBHOOK_BASE_URL: http://app:3000
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      evolution:
+        condition: service_started
     volumes:
       - .:/app
       - bundle_cache:/bundle
@@ -54,5 +107,7 @@ services:
 
 volumes:
   postgres_data:
+  evolution_postgres_data:
+  evolution_instances:
   bundle_cache:
   node_modules:

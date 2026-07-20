@@ -6,6 +6,7 @@ import Twilio from './Twilio.vue';
 import ThreeSixtyDialogWhatsapp from './360DialogWhatsapp.vue';
 import CloudWhatsapp from './CloudWhatsapp.vue';
 import WhatsappEmbeddedSignup from './WhatsappEmbeddedSignup.vue';
+import EvolutionWhatsapp from './EvolutionWhatsapp.vue';
 import ChannelSelector from 'dashboard/components/ChannelSelector.vue';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { META_RESTRICTION_STATUS_URL } from 'dashboard/constants/globals';
@@ -22,6 +23,7 @@ const PROVIDER_TYPES = {
   WHATSAPP_EMBEDDED: 'whatsapp_embedded',
   WHATSAPP_MANUAL: 'whatsapp_manual',
   THREE_SIXTY_DIALOG: '360dialog',
+  EVOLUTION: 'evolution',
 };
 
 const isWhatsappEmbeddedSignupRestricted = computed(() => {
@@ -53,6 +55,12 @@ const availableProviders = computed(() => [
     title: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO'),
     description: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO_DESC'),
     icon: 'i-woot-twilio',
+  },
+  {
+    key: PROVIDER_TYPES.EVOLUTION,
+    title: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.EVOLUTION'),
+    description: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.EVOLUTION_DESC'),
+    icon: 'i-woot-whatsapp',
   },
 ]);
 
@@ -145,6 +153,9 @@ const handleManualLinkClick = () => {
         <Twilio
           v-else-if="selectedProvider === PROVIDER_TYPES.TWILIO"
           type="whatsapp"
+        />
+        <EvolutionWhatsapp
+          v-else-if="selectedProvider === PROVIDER_TYPES.EVOLUTION"
         />
         <ThreeSixtyDialogWhatsapp
           v-else-if="selectedProvider === PROVIDER_TYPES.THREE_SIXTY_DIALOG"
