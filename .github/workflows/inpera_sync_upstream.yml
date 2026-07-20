@@ -1,0 +1,194 @@
+name: Inpera - Sync upstream Chatwoot
+
+on:
+  schedule:
+    # Mondays at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      create_inpera_pr:
+        description: Open a PR to merge develop into inpera_chat when behind
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  UPSTREAM_REPO: https://github.com/chatwoot/chatwoot.git
+  DEVELOP_BRANCH: develop
+  INPERA_BRANCH: inpera_chat
+
+jobs:
+  sync-develop:
+    name: Sync develop from upstream
+    runs-on: ubuntu-latest
+    outputs:
+      develop_updated: ${{ steps.sync.outputs.develop_updated }}
+      develop_sha: ${{ steps.sync.outputs.develop_sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream "$UPSTREAM_REPO" || git remote set-url upstream "$UPSTREAM_REPO"
+
+      - name: Sync develop with upstream
+        id: sync
+        run: |
+          set -euo pipefail
+          git fetch upstream "$DEVELOP_BRANCH"
+          git checkout "$DEVELOP_BRANCH"
+
+          before="$(git rev-parse HEAD)"
+          if git merge "upstream/$DEVELOP_BRANCH" --ff-only; then
+            echo "Fast-forwarded develop"
+          else
+            git merge "upstream/$DEVELOP_BRANCH" -m "chore: sync develop with upstream chatwoot/chatwoot"
+          fi
+          after="$(git rev-parse HEAD)"
+
+          if [[ "$before" == "$after" ]]; then
+            echo "develop_updated=false" >> "$GITHUB_OUTPUT"
+            echo "develop is already up to date with upstream"
+          else
+            echo "develop_updated=true" >> "$GITHUB_OUTPUT"
+            git push origin "$DEVELOP_BRANCH"
+            echo "Pushed develop ($before -> $after)"
+          fi
+          echo "develop_sha=$after" >> "$GITHUB_OUTPUT"
+
+  sync-inpera-pr:
+    name: PR develop into inpera_chat
+    needs: sync-develop
+    if: github.event_name != 'workflow_dispatch' || inputs.create_inpera_pr != false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if inpera_chat is behind develop
+        id: check
+        run: |
+          set -euo pipefail
+          git fetch origin "$DEVELOP_BRANCH" "$INPERA_BRANCH"
+
+          if git merge-base --is-ancestor "origin/$DEVELOP_BRANCH" "origin/$INPERA_BRANCH"; then
+            echo "behind=false" >> "$GITHUB_OUTPUT"
+            echo "inpera_chat already includes develop"
+            exit 0
+          fi
+
+          echo "behind=true" >> "$GITHUB_OUTPUT"
+          commits="$(git log --oneline "origin/$INPERA_BRANCH..origin/$DEVELOP_BRANCH" | head -20)"
+          {
+            echo "commits<<EOF"
+            echo "$commits"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Attempt merge on sync branch
+        if: steps.check.outputs.behind == 'true'
+        id: merge
+        run: |
+          set -euo pipefail
+          branch="chore/sync-${INPERA_BRANCH}-$(date -u +%Y%m%d-%H%M)"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+          git checkout -b "$branch" "origin/$INPERA_BRANCH"
+          if git merge "origin/$DEVELOP_BRANCH" -m "chore: merge develop into inpera_chat (upstream sync)"; then
+            echo "status=clean" >> "$GITHUB_OUTPUT"
+            git push origin "$branch"
+          else
+            echo "status=conflict" >> "$GITHUB_OUTPUT"
+            conflicted="$(git diff --name-only --diff-filter=U | paste -sd, -)"
+            echo "conflicted=$conflicted" >> "$GITHUB_OUTPUT"
+            git merge --abort
+          fi
+
+      - name: Open PR for clean merge
+        if: steps.check.outputs.behind == 'true' && steps.merge.outputs.status == 'clean'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing="$(gh pr list --head "${{ steps.merge.outputs.branch }}" --base "$INPERA_BRANCH" --json number --jq '.[0].number' || true)"
+          if [[ -n "$existing" && "$existing" != "null" ]]; then
+            echo "PR #$existing already exists for ${{ steps.merge.outputs.branch }}"
+            exit 0
+          fi
+
+          gh pr create \
+            --base "$INPERA_BRANCH" \
+            --head "${{ steps.merge.outputs.branch }}" \
+            --title "chore: sync inpera_chat with upstream (via develop)" \
+            --body "$(cat <<EOF
+## Summary
+Automated sync from \`develop\` (upstream mirror) into \`inpera_chat\`.
+
+Upstream develop SHA: \`${{ needs.sync-develop.outputs.develop_sha }}\`
+
+## Commits included
+\`\`\`
+${{ steps.check.outputs.commits }}
+\`\`\`
+
+## Review checklist
+- [ ] Evolution API files intact (\`evolution_api\` provider, webhooks, services)
+- [ ] Inpera branding preserved where applicable
+- [ ] WhatsApp Cloud / embedded signup upstream fixes retained in shared files
+
+## Test plan
+- [ ] Run Evolution specs: \`bundle exec rspec spec/services/whatsapp/**/*evolution* spec/controllers/webhooks/evolution*\`
+- [ ] Smoke test Evolution inbox connection and message flow
+EOF
+)"
+
+      - name: Open issue when merge conflicts
+        if: steps.check.outputs.behind == 'true' && steps.merge.outputs.status == 'conflict'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          title="Manual sync required: develop -> inpera_chat ($(date -u +%Y-%m-%d))"
+          body="$(cat <<EOF
+Automated sync could not merge \`develop\` into \`inpera_chat\` due to conflicts.
+
+**Conflicted files:** \`${{ steps.merge.outputs.conflicted }}\`
+
+## Commits waiting to merge
+\`\`\`
+${{ steps.check.outputs.commits }}
+\`\`\`
+
+## Manual resolution
+\`\`\`bash
+git fetch origin
+git checkout inpera_chat
+git merge origin/develop
+# resolve conflicts (keep Evolution API + Inpera branding)
+git push origin inpera_chat
+\`\`\`
+
+Or run locally:
+\`\`\`bash
+bin/sync_upstream_branches.sh
+\`\`\`
+EOF
+)"
+          gh issue create --title "$title" --body "$body"
