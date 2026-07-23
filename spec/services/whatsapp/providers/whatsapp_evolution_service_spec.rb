@@ -14,6 +14,11 @@ describe Whatsapp::Providers::WhatsappEvolutionService do
   let(:response_headers) { { 'Content-Type' => 'application/json' } }
   let(:evolution_response) { { key: { id: 'EVO_MSG_1', remoteJid: '5511999999999@s.whatsapp.net', fromMe: true } } }
 
+  before do
+    # Prefer provider_config api_url in specs; Docker sets EVOLUTION_API_URL in the container.
+    stub_const('ENV', ENV.to_hash.merge('EVOLUTION_API_URL' => '', 'EVOLUTION_API_KEY' => ''))
+  end
+
   describe '#send_message' do
     it 'sends a text message via Evolution API' do
       stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
@@ -25,14 +30,80 @@ describe Whatsapp::Providers::WhatsappEvolutionService do
       expect(service.send_message('+5511999999999', message)).to eq('EVO_MSG_1')
     end
 
-    it 'sends media via sendMedia endpoint' do
+    it 'sends media via sendMedia as base64 (not a public URL)' do
       attachment = message.attachments.new(account_id: message.account_id, file_type: :image)
       attachment.file.attach(io: Rails.root.join('spec/assets/avatar.png').open, filename: 'avatar.png', content_type: 'image/png')
+      message.save!
 
       stub_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')
+        .with { |req|
+          body = JSON.parse(req.body)
+          media = body['media'].to_s
+          body['mediatype'] == 'image' &&
+            body['fileName'] == 'avatar.png' &&
+            body['caption'] == 'hello evolution' &&
+            media.present? &&
+            !media.start_with?('data:') &&
+            !media.include?('http://') &&
+            media.match?(%r{\A[A-Za-z0-9+/]+=*\z})
+        }
         .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
 
-      expect(service.send_message('5511999999999', message)).to eq('EVO_MSG_1')
+      expect(service.send_message('5511999999999', message.reload)).to eq('EVO_MSG_1')
+    end
+
+    it 'omits empty caption when sending audio file attachments via sendMedia' do
+      audio_message = create(:message, conversation: conversation, message_type: :outgoing, content: nil,
+                                       inbox: whatsapp_channel.inbox)
+      attachment = audio_message.attachments.new(account_id: audio_message.account_id, file_type: :audio)
+      attachment.file.attach(
+        io: StringIO.new('fake-audio-bytes'),
+        filename: 'voice.mp3',
+        content_type: 'audio/mpeg'
+      )
+      audio_message.save!
+
+      stub_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')
+        .with { |req|
+          body = JSON.parse(req.body)
+          media = body['media'].to_s
+          body['mediatype'] == 'audio' &&
+            !body.key?('caption') &&
+            !media.start_with?('data:') &&
+            media.match?(%r{\A[A-Za-z0-9+/]+=*\z})
+        }
+        .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+      expect(service.send_message('5511999999999', audio_message.reload)).to eq('EVO_MSG_1')
+    end
+
+    it 'sends microphone recordings via sendWhatsAppAudio as native PTT' do
+      audio_message = create(:message, conversation: conversation, message_type: :outgoing, content: nil,
+                                       inbox: whatsapp_channel.inbox)
+      attachment = audio_message.attachments.new(
+        account_id: audio_message.account_id,
+        file_type: :audio,
+        meta: { 'is_voice_message' => true }
+      )
+      attachment.file.attach(
+        io: StringIO.new('fake-voice-bytes'),
+        filename: 'recording.ogg',
+        content_type: 'audio/ogg'
+      )
+      audio_message.save!
+
+      stub_request(:post, 'http://evolution.test/message/sendWhatsAppAudio/cw-test-instance')
+        .with { |req|
+          body = JSON.parse(req.body)
+          media = body['audio'].to_s
+          body['number'] == '5511999999999' &&
+            !media.start_with?('data:') &&
+            media.match?(%r{\A[A-Za-z0-9+/]+=*\z})
+        }
+        .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+      expect(service.send_message('5511999999999', audio_message.reload)).to eq('EVO_MSG_1')
+      expect(a_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')).not_to have_been_made
     end
   end
 
@@ -54,7 +125,7 @@ describe Whatsapp::Providers::WhatsappEvolutionService do
     it 'rewrites localhost api_url to EVOLUTION_API_URL inside Docker' do
       whatsapp_channel.provider_config = whatsapp_channel.provider_config.merge('api_url' => 'http://localhost:8080')
       whatsapp_channel.save!(validate: false)
-      stub_const('ENV', ENV.to_hash.merge('EVOLUTION_API_URL' => 'http://evolution:8080'))
+      stub_const('ENV', ENV.to_hash.merge('EVOLUTION_API_URL' => 'http://evolution:8080', 'EVOLUTION_API_KEY' => ''))
 
       stub_request(:get, 'http://evolution:8080/instance/fetchInstances')
         .to_return(status: 200, body: [].to_json, headers: response_headers)

@@ -309,6 +309,7 @@ class Whatsapp::IncomingMessageEvolutionService
       message.dig(:imageMessage, :caption).presence ||
       message.dig(:videoMessage, :caption).presence ||
       message.dig(:documentMessage, :caption).presence ||
+      message.dig(:documentWithCaptionMessage, :message, :documentMessage, :caption).presence ||
       message.dig(:buttonsResponseMessage, :selectedDisplayText).presence ||
       message.dig(:listResponseMessage, :title).presence ||
       message.dig(:templateButtonReplyMessage, :selectedDisplayText).presence ||
@@ -317,21 +318,81 @@ class Whatsapp::IncomingMessageEvolutionService
 
   def attach_media(message, payload)
     msg = (payload[:message] || {}).with_indifferent_access
-    base64 = payload[:message] && (payload.dig('message', 'base64') || payload[:base64])
-    # Evolution with webhookBase64 may nest base64 differently
     media_info = media_from_message(msg)
+    base64 = extract_base64(payload, msg)
     return if media_info.blank? && base64.blank?
 
-    return attach_base64(message, base64, media_info) if base64.present?
+    base64 = fetch_base64_from_evolution(message.source_id) if base64.blank? && media_info.present?
+    if base64.blank?
+      Rails.logger.warn "[EVOLUTION] attach_media skipped: no base64 for source_id=#{message.source_id}"
+      return
+    end
 
-    # Fallback: no remote download URL without getBase64 — skip silently if no base64
+    attach_base64(message, base64, media_info)
+  end
+
+  def extract_base64(payload, msg)
+    candidates = [
+      msg['base64'],
+      msg[:base64],
+      payload.dig('message', 'base64'),
+      payload.dig(:message, :base64),
+      payload['base64'],
+      payload[:base64],
+      payload.dig('data', 'base64'),
+      payload.dig(:data, :base64)
+    ]
+    candidates.find(&:present?)
+  end
+
+  def fetch_base64_from_evolution(source_id)
+    return if source_id.blank?
+
+    channel = inbox.channel
+    return unless channel.is_a?(Channel::Whatsapp)
+
+    provider = Whatsapp::Providers::WhatsappEvolutionService.new(whatsapp_channel: channel)
+    response = HTTParty.post(
+      provider.media_url(source_id),
+      headers: provider.api_headers,
+      body: {
+        message: { key: { id: source_id } },
+        convertToMp4: false
+      }.to_json,
+      timeout: 60
+    )
+    unless response.success?
+      Rails.logger.warn "[EVOLUTION] getBase64FromMediaMessage failed: #{response.code} #{response.body}"
+      return
+    end
+
+    extract_base64_from_api_response(response.parsed_response)
+  rescue StandardError => e
+    Rails.logger.warn "[EVOLUTION] getBase64FromMediaMessage error: #{e.message}"
     nil
+  end
+
+  def extract_base64_from_api_response(parsed)
+    return if parsed.blank?
+    return parsed if parsed.is_a?(String) && parsed.present?
+    return unless parsed.is_a?(Hash)
+
+    parsed = parsed.with_indifferent_access
+    parsed[:base64].presence ||
+      parsed[:data].presence ||
+      parsed.dig(:message, :base64).presence ||
+      parsed.dig(:data, :base64).presence
   end
 
   def media_from_message(msg)
     %w[imageMessage videoMessage audioMessage documentMessage stickerMessage].each do |key|
       return [key, msg[key]] if msg[key].present?
     end
+    # documentWithCaptionMessage nests documentMessage
+    nested_doc = msg.dig('documentWithCaptionMessage', 'message', 'documentMessage') ||
+                 msg.dig(:documentWithCaptionMessage, :message, :documentMessage)
+    return ['documentMessage', nested_doc] if nested_doc.present?
+
     nil
   end
 
@@ -339,8 +400,10 @@ class Whatsapp::IncomingMessageEvolutionService
     raw = base64_data.to_s
     raw = raw.split(',', 2).last if raw.include?(',')
     binary = Base64.decode64(raw)
-    filename = media_info&.last&.dig('fileName').presence || "evolution-#{SecureRandom.hex(4)}"
-    content_type = media_info&.last&.dig('mimetype').presence || 'application/octet-stream'
+    media_meta = (media_info&.last || {}).with_indifferent_access
+    filename = media_meta[:fileName].presence || media_meta[:filename].presence ||
+               default_filename_for(media_info&.first, media_meta[:mimetype])
+    content_type = media_meta[:mimetype].presence || 'application/octet-stream'
     file_type = file_type_from_media_key(media_info&.first)
 
     message.attachments.new(
@@ -354,6 +417,18 @@ class Whatsapp::IncomingMessageEvolutionService
     )
   rescue StandardError => e
     Rails.logger.warn "[EVOLUTION] attach_media failed: #{e.message}"
+  end
+
+  def default_filename_for(media_key, mimetype)
+    ext = case media_key
+          when 'audioMessage' then 'ogg'
+          when 'imageMessage', 'stickerMessage' then 'jpg'
+          when 'videoMessage' then 'mp4'
+          else
+            mime_ext = mimetype.to_s.split('/').last.to_s.split(';').first
+            mime_ext.presence || 'bin'
+          end
+    "evolution-#{SecureRandom.hex(4)}.#{ext}"
   end
 
   def file_type_from_media_key(key)

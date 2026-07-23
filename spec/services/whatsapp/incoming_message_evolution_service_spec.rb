@@ -6,6 +6,10 @@ describe Whatsapp::IncomingMessageEvolutionService do
   end
   let(:inbox) { whatsapp_channel.inbox }
 
+  before do
+    stub_const('ENV', ENV.to_hash.merge('EVOLUTION_API_URL' => '', 'EVOLUTION_API_KEY' => ''))
+  end
+
   describe '#perform' do
     it 'creates an incoming message from MESSAGES_UPSERT' do
       params = {
@@ -132,6 +136,105 @@ describe Whatsapp::IncomingMessageEvolutionService do
       message = Message.find_by(source_id: 'EVO_LID_1')
       expect(message.content).to eq('Olá')
       expect(inbox.contact_inboxes.find_by(source_id: '5511933579244')).to be_present
+    end
+
+    it 'attaches audio when webhook includes base64' do
+      audio_bytes = 'fake-ogg-audio'
+      params = {
+        event: 'messages.upsert',
+        data: {
+          key: {
+            remoteJid: '5511888777666@s.whatsapp.net',
+            fromMe: false,
+            id: 'EVO_AUDIO_1'
+          },
+          pushName: 'Alice',
+          message: {
+            audioMessage: {
+              mimetype: 'audio/ogg; codecs=opus',
+              seconds: 3
+            },
+            base64: Base64.strict_encode64(audio_bytes)
+          }
+        }
+      }
+
+      described_class.new(inbox: inbox, params: params).perform
+
+      message = Message.find_by(source_id: 'EVO_AUDIO_1')
+      expect(message).to be_present
+      expect(message.attachments.count).to eq(1)
+      expect(message.attachments.first.file_type).to eq('audio')
+      expect(message.attachments.first.file.download).to eq(audio_bytes)
+    end
+
+    it 'fetches base64 via getBase64FromMediaMessage when webhook omits it' do
+      audio_bytes = 'downloaded-audio'
+      stub_request(:post, 'http://evolution.test/chat/getBase64FromMediaMessage/cw-test-instance')
+        .with(
+          body: hash_including(
+            'message' => hash_including('key' => hash_including('id' => 'EVO_AUDIO_2')),
+            'convertToMp4' => false
+          )
+        )
+        .to_return(
+          status: 200,
+          body: { base64: Base64.strict_encode64(audio_bytes) }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+
+      params = {
+        event: 'messages.upsert',
+        data: {
+          key: {
+            remoteJid: '5511888777666@s.whatsapp.net',
+            fromMe: false,
+            id: 'EVO_AUDIO_2'
+          },
+          pushName: 'Alice',
+          message: {
+            audioMessage: {
+              mimetype: 'audio/ogg; codecs=opus'
+            }
+          }
+        }
+      }
+
+      described_class.new(inbox: inbox, params: params).perform
+
+      message = Message.find_by(source_id: 'EVO_AUDIO_2')
+      expect(message.attachments.count).to eq(1)
+      expect(message.attachments.first.file_type).to eq('audio')
+      expect(message.attachments.first.file.download).to eq(audio_bytes)
+    end
+
+    it 'attaches document when webhook includes base64' do
+      file_bytes = '%PDF-1.4 fake'
+      params = {
+        event: 'messages.upsert',
+        data: {
+          key: {
+            remoteJid: '5511888777666@s.whatsapp.net',
+            fromMe: false,
+            id: 'EVO_DOC_1'
+          },
+          pushName: 'Alice',
+          message: {
+            documentMessage: {
+              mimetype: 'application/pdf',
+              fileName: 'contrato.pdf'
+            },
+            base64: Base64.strict_encode64(file_bytes)
+          }
+        }
+      }
+
+      described_class.new(inbox: inbox, params: params).perform
+
+      message = Message.find_by(source_id: 'EVO_DOC_1')
+      expect(message.attachments.count).to eq(1)
+      expect(message.attachments.first.file_type).to eq('file')
+      expect(message.attachments.first.file.filename.to_s).to eq('contrato.pdf')
     end
   end
 end

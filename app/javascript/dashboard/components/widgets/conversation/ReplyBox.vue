@@ -378,7 +378,8 @@ export default {
       return `draft-${this.conversationIdByRoute}-${this.replyType}`;
     },
     audioRecordFormat() {
-      if (this.isAWhatsAppCloudChannel) {
+      // Cloud and Evolution expect OGG/Opus for native WhatsApp voice notes (PTT).
+      if (this.isAWhatsAppCloudChannel || this.isAnEvolutionWhatsAppChannel) {
         return AUDIO_FORMATS.OGG;
       }
       if (this.isAWhatsAppChannel || this.isATelegramChannel) {
@@ -782,7 +783,8 @@ export default {
         const isOnWhatsApp =
           this.isATwilioWhatsAppChannel ||
           this.isAWhatsAppCloudChannel ||
-          this.is360DialogWhatsAppChannel;
+          this.is360DialogWhatsAppChannel ||
+          this.isAnEvolutionWhatsAppChannel;
         // Instagram and TikTok do not support sending text and attachments in the same message.
         // For Instagram, combining them causes duplicate messages due to separate echo events per component.
         // For TikTok, the API rejects messages that mix text and media.
@@ -1144,11 +1146,14 @@ export default {
         this.attachedFiles.forEach(attachment => {
           if (this.globalConfig.directUploadsEnabled) {
             messagePayload.files.push(attachment.blobSignedId);
-            if (attachment.isVoiceMessage) {
-              messagePayload.isVoiceMessage = true;
-            }
           } else {
             messagePayload.files.push(attachment.resource.file);
+          }
+          // Must be outside the direct-upload branch: without this flag the
+          // backend never tags meta.is_voice_message and Evolution falls back
+          // to sendMedia (audio-as-file) instead of sendWhatsAppAudio (PTT).
+          if (attachment.isVoiceMessage) {
+            messagePayload.isVoiceMessage = true;
           }
         });
       }

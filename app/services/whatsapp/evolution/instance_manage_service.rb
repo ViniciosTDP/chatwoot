@@ -43,6 +43,8 @@ class Whatsapp::Evolution::InstanceManageService
           enabled: true,
           url: webhook_url,
           webhookByEvents: false,
+          # Evolution v2 expects `base64`; keep `webhookBase64` for older builds.
+          base64: true,
           webhookBase64: true,
           events: WEBHOOK_EVENTS
         }
@@ -50,10 +52,12 @@ class Whatsapp::Evolution::InstanceManageService
     )
     raise "Evolution webhook setup failed: #{response.body}" unless response.success?
 
+    update_provider_config!('webhook_media_base64' => true)
     true
   end
 
   def connection_status
+    ensure_webhook_media_base64!
     response = HTTParty.get(
       "#{api_base_path}/instance/connectionState/#{instance_name}",
       headers: api_headers
@@ -77,6 +81,7 @@ class Whatsapp::Evolution::InstanceManageService
   end
 
   def reconnect!
+    ensure_webhook_media_base64!(force: true)
     response = HTTParty.get(
       "#{api_base_path}/instance/connect/#{instance_name}",
       headers: api_headers
@@ -107,6 +112,16 @@ class Whatsapp::Evolution::InstanceManageService
   end
 
   private
+
+  # Re-apply webhook once for existing instances so they pick up base64: true.
+  # Polled every 3s during QR setup — gate with provider_config flag.
+  def ensure_webhook_media_base64!(force: false)
+    return if !force && whatsapp_channel.provider_config['webhook_media_base64']
+
+    set_webhook!
+  rescue StandardError => e
+    Rails.logger.warn "[EVOLUTION] ensure_webhook_media_base64 failed: #{e.message}"
+  end
 
   def create_instance!
     response = HTTParty.post(

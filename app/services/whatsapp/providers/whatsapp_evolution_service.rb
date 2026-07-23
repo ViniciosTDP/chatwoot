@@ -65,7 +65,13 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
   def error_message(response)
     parsed = response.parsed_response
     return parsed if parsed.is_a?(String)
-    return parsed['message'] || parsed['error'] || parsed.to_s if parsed.is_a?(Hash)
+
+    if parsed.is_a?(Hash)
+      nested = parsed.dig('response', 'message')
+      nested = nested.join(', ') if nested.is_a?(Array)
+      return nested if nested.present?
+      return parsed['message'] || parsed['error'] || parsed.to_s
+    end
 
     response.body
   end
@@ -122,20 +128,52 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
 
   def send_attachment_message(phone_number, message)
     attachment = message.attachments.first
+    return send_voice_message(phone_number, message, attachment) if voice_message?(attachment)
+
     mediatype = media_type_for(attachment)
+    content_type = attachment.file.content_type
+    body = {
+      number: normalize_number(phone_number),
+      mediatype: mediatype,
+      mimetype: content_type,
+      media: media_as_base64(attachment),
+      fileName: attachment.file.filename.to_s
+    }
+    caption = message.outgoing_content.to_s
+    # Evolution/WhatsApp reject empty captions on audio; Cloud API also skips caption for audio.
+    body[:caption] = caption if caption.present? && mediatype != 'audio'
+
     response = HTTParty.post(
       "#{api_base_path}/message/sendMedia/#{instance_name}",
       headers: api_headers,
+      body: body.to_json
+    )
+    process_response(response, message)
+  end
+
+  # Microphone recordings are tagged is_voice_message; Evolution's sendWhatsAppAudio
+  # renders them as native WhatsApp PTT (waveform + playback speed).
+  def send_voice_message(phone_number, message, attachment)
+    response = HTTParty.post(
+      "#{api_base_path}/message/sendWhatsAppAudio/#{instance_name}",
+      headers: api_headers,
       body: {
         number: normalize_number(phone_number),
-        mediatype: mediatype,
-        mimetype: attachment.file.content_type,
-        caption: message.outgoing_content.to_s,
-        media: attachment.download_url,
-        fileName: attachment.file.filename.to_s
+        audio: media_as_base64(attachment)
       }.to_json
     )
     process_response(response, message)
+  end
+
+  def voice_message?(attachment)
+    attachment.file_type == 'audio' &&
+      ActiveModel::Type::Boolean.new.cast(attachment.meta&.dig('is_voice_message'))
+  end
+
+  # Evolution's isBase64() rejects data-URI prefixes (data:mime;base64,...).
+  # Send raw base64; mimetype/fileName carry the type metadata.
+  def media_as_base64(attachment)
+    Base64.strict_encode64(attachment.file.blob.download)
   end
 
   def send_interactive_message(phone_number, message)
