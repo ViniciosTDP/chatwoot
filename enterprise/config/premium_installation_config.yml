@@ -1,18 +1,20 @@
 # ------- Branding Related Config ------- #
+# Keep in sync with config/installation_config.yml.
+# On community plan, Internal::ReconcilePlanConfigService resets branding to these values.
 - name: INSTALLATION_NAME
-  value: 'Chatwoot'
+  value: 'INPERA Chat'
 - name: LOGO_THUMBNAIL
-  value: '/brand-assets/logo_thumbnail.svg'
+  value: 'https://inpera.s3.amazonaws.com/logoPadrao/IconePadrao.png'
 - name: LOGO
-  value: '/brand-assets/logo.svg'
+  value: 'https://inpera.s3.amazonaws.com/logoPadrao/INPERA-ESCURO(300x100).png'
 - name: LOGO_DARK
-  value: '/brand-assets/logo_dark.svg'
+  value: 'https://inpera.s3.amazonaws.com/logoPadrao/INPERA-ESCURO(300x100).png'
 - name: BRAND_URL
   value: 'https://www.chatwoot.com'
 - name: WIDGET_BRAND_URL
   value: 'https://www.chatwoot.com'
 - name: BRAND_NAME
-  value: 'Chatwoot'
+  value: 'INPERA Chat'
 - name: TERMS_URL
   value: 'https://www.chatwoot.com/terms-of-service'
 - name: PRIVACY_URL
