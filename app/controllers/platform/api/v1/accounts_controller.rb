@@ -1,9 +1,10 @@
 class Platform::Api::V1::AccountsController < PlatformController
   def index
+    # filter_map drops nils when an Account was deleted but the permissible row remains
     @resources = @platform_app.platform_app_permissibles
                               .where(permissible_type: 'Account')
                               .includes(:permissible)
-                              .map(&:permissible)
+                              .filter_map(&:permissible)
   end
 
   def show; end

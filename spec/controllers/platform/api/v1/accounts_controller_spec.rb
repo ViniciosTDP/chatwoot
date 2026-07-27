@@ -111,6 +111,18 @@ RSpec.describe 'Platform Accounts API', type: :request do
         expect(json_response.size).to eq(2)
         expect(json_response.map { |acc| acc['name'] }).to include('Account A', 'Account B')
       end
+
+      it 'skips orphaned permissibles for deleted accounts' do
+        orphan = create(:platform_app_permissible, platform_app: platform_app, permissible: create(:account, name: 'Gone'))
+        Account.find(orphan.permissible_id).delete
+
+        get '/platform/api/v1/accounts', headers: { api_access_token: platform_app.access_token.token }, as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = response.parsed_body
+        expect(json_response.size).to eq(2)
+        expect(json_response.map { |acc| acc['name'] }).not_to include('Gone')
+      end
     end
   end
 
