@@ -1,4 +1,8 @@
 class SuperAdmin::AccountsController < SuperAdmin::ApplicationController
+  # Accounts pending async destroy must disappear from the default index immediately
+  # (unlike users, which Administrate destroys synchronously).
+  IMMEDIATE_DELETION_REASON = 'super_admin_destroy'
+
   # Overwrite any of the RESTful controller actions to implement custom behavior
   # For example, you may want to send an email after a foo is updated.
   #
@@ -58,12 +62,30 @@ class SuperAdmin::AccountsController < SuperAdmin::ApplicationController
     # rubocop:enable Rails/I18nLocaleTexts
   end
 
+  def scoped_resource
+    resource_class.where(
+      "COALESCE(custom_attributes->>'marked_for_deletion_reason', '') != ?",
+      IMMEDIATE_DELETION_REASON
+    )
+  end
+
   def destroy
     account = Account.find(params[:id])
 
-    DeleteObjectJob.perform_later(account) if account.present?
+    if account.present?
+      # Hide from Super Admin index right away; DeleteObjectJob finishes in Sidekiq.
+      account.update!(
+        status: :suspended,
+        custom_attributes: (account.custom_attributes || {}).merge(
+          'marked_for_deletion_at' => Time.current.iso8601,
+          'marked_for_deletion_reason' => IMMEDIATE_DELETION_REASON
+        )
+      )
+      DeleteObjectJob.perform_later(account)
+    end
+
     # rubocop:disable Rails/I18nLocaleTexts
-    redirect_back(fallback_location: [namespace, requested_resource], notice: 'Account deletion is in progress.')
+    redirect_to super_admin_accounts_path, notice: 'Account deletion is in progress.'
     # rubocop:enable Rails/I18nLocaleTexts
   end
 end

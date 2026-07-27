@@ -19,7 +19,9 @@ const instanceName = ref('');
 const loading = ref(false);
 let pollTimer = null;
 
-const isConnected = computed(() => ['open', 'connected'].includes(status.value));
+const isConnected = computed(() =>
+  ['open', 'connected'].includes(status.value)
+);
 const qrImageSrc = computed(() => {
   if (!qrcode.value) return '';
   return qrcode.value.startsWith('data:')
@@ -82,7 +84,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 items-center p-4 mt-4 rounded-xl border border-n-weak">
+  <div
+    class="flex flex-col gap-4 items-center p-4 mt-4 rounded-xl border border-n-weak"
+  >
     <h3 class="text-base font-medium text-n-slate-12">
       {{ $t('INBOX_MGMT.ADD.WHATSAPP.EVOLUTION.CONNECTION.TITLE') }}
     </h3>
@@ -106,15 +110,13 @@ onUnmounted(() => {
         class="rounded-lg size-48"
       />
     </div>
-    <p
-      v-if="!isConnected"
-      class="text-sm text-center text-n-slate-11 max-w-md"
-    >
+    <p v-if="!isConnected" class="text-sm text-center text-n-slate-11 max-w-md">
       {{ $t('INBOX_MGMT.ADD.WHATSAPP.EVOLUTION.CONNECTION.SCAN_HINT') }}
     </p>
     <NextButton
       v-if="!isConnected"
-      :loading="loading"
+      :disabled="loading"
+      :is-loading="loading"
       solid
       blue
       :label="$t('INBOX_MGMT.ADD.WHATSAPP.EVOLUTION.CONNECTION.RECONNECT')"

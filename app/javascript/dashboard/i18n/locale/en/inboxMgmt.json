@@ -320,6 +320,8 @@
           }
         },
         "SUBMIT_BUTTON": "Create WhatsApp Channel",
+        "SUBMIT_BUTTON_LOADING": "Creating WhatsApp channel...",
+        "LOADING_HINT": "Loading...",
         "EMBEDDED_SIGNUP": {
           "TITLE": "Quick setup with Meta",
           "DESC": "Use the WhatsApp Embedded Signup flow to quickly connect new numbers. You will be redirected to Meta to log into your WhatsApp Business account. Having admin access will help make the setup smooth and easy.",

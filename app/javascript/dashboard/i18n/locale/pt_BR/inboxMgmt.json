@@ -320,6 +320,8 @@
           }
         },
         "SUBMIT_BUTTON": "Criar canal do WhatsApp",
+        "SUBMIT_BUTTON_LOADING": "Criando canal do WhatsApp...",
+        "LOADING_HINT": "Carregando...",
         "EMBEDDED_SIGNUP": {
           "TITLE": "Configuração rápida com Meta",
           "DESC": "Use o fluxo de inscrição incorporada do WhatsApp para conectar rapidamente novos números. Você será redirecionado para a Meta para entrar na sua conta do WhatsApp Business. Ter acesso de administrador ajudará a tornar a configuração simples e fácil.",

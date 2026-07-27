@@ -157,6 +157,11 @@ export default {
       return this.tabs[this.selectedTabIndex]?.key;
     },
     shouldShowWhatsAppConfiguration() {
+      // Cloud (health/webhook) and Evolution (QR reconnect) both need the Configuration tab
+      return this.isAWhatsAppCloudChannel || this.isAnEvolutionWhatsAppChannel;
+    },
+    shouldShowWhatsAppAccountHealth() {
+      // Meta Cloud account health only — not applicable to Evolution Baileys
       return this.isAWhatsAppCloudChannel;
     },
     whatsAppAPIProviderName() {
@@ -168,6 +173,9 @@ export default {
       }
       if (this.isATwilioWhatsAppChannel) {
         return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO');
+      }
+      if (this.isAnEvolutionWhatsAppChannel) {
+        return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.EVOLUTION');
       }
       return '';
     },
@@ -233,7 +241,7 @@ export default {
           },
         ];
       }
-      if (this.shouldShowWhatsAppConfiguration) {
+      if (this.shouldShowWhatsAppAccountHealth) {
         visibleToAllChannelTabs = [
           ...visibleToAllChannelTabs,
           {

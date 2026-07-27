@@ -201,6 +201,19 @@ RSpec.describe 'Super Admin accounts API', type: :request do
 
         expect(Account.count).to eq(total_accounts - 1)
       end
+
+      it 'hides the account from the index before the async job finishes' do
+        sign_in(super_admin, scope: :super_admin)
+
+        delete "/super_admin/accounts/#{account.id}"
+
+        expect(response).to redirect_to(super_admin_accounts_path)
+        expect(account.reload.status).to eq('suspended')
+        expect(account.custom_attributes['marked_for_deletion_reason']).to eq('super_admin_destroy')
+
+        get '/super_admin/accounts'
+        expect(response.body).not_to include(account.name)
+      end
     end
   end
 end
