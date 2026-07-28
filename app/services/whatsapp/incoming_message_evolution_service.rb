@@ -141,12 +141,13 @@ class Whatsapp::IncomingMessageEvolutionService
 
   def process_connection_update
     state = data[:state] || data.dig(:instance, 'state') || data[:connection]
-    qr = data[:qrcode] || data.dig(:qrcode, 'base64') || data['base64']
+    # Prefer nested base64; data[:qrcode] alone may be a Hash from Evolution
+    qr = data.dig(:qrcode, 'base64') || data.dig(:qrcode, :base64) || data['base64'] || data[:qrcode]
     inbox.channel.evolution_instance_service.update_connection_status!(state, qrcode: qr)
   end
 
   def process_qrcode_update
-    qr = data[:qrcode] || data.dig(:qrcode, 'base64') || data['base64'] || data[:code]
+    qr = data.dig(:qrcode, 'base64') || data.dig(:qrcode, :base64) || data['base64'] || data[:code] || data[:qrcode]
     inbox.channel.evolution_instance_service.update_qrcode!(qr) if qr.present?
   end
 

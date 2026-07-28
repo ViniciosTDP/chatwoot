@@ -22,11 +22,24 @@ let pollTimer = null;
 const isConnected = computed(() =>
   ['open', 'connected'].includes(status.value)
 );
+
+function normalizeQrcodePayload(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object') {
+    if (value.base64) return value.base64;
+    if (value.qrcode?.base64) return value.qrcode.base64;
+    if (typeof value.code === 'string' && value.code.startsWith('data:')) {
+      return value.code;
+    }
+  }
+  return '';
+}
+
 const qrImageSrc = computed(() => {
-  if (!qrcode.value) return '';
-  return qrcode.value.startsWith('data:')
-    ? qrcode.value
-    : `data:image/png;base64,${qrcode.value}`;
+  const raw = normalizeQrcodePayload(qrcode.value);
+  if (!raw) return '';
+  return raw.startsWith('data:') ? raw : `data:image/png;base64,${raw}`;
 });
 
 const statusLabel = computed(() => {
@@ -43,7 +56,7 @@ async function fetchStatus() {
   try {
     const { data } = await InboxesAPI.getEvolutionStatus(props.inboxId);
     status.value = data.state || 'created';
-    qrcode.value = data.qrcode || '';
+    qrcode.value = normalizeQrcodePayload(data.qrcode);
     instanceName.value = data.instance_name || '';
     if (isConnected.value && pollTimer) {
       clearInterval(pollTimer);
@@ -59,7 +72,7 @@ async function reconnect() {
   try {
     const { data } = await InboxesAPI.reconnectEvolution(props.inboxId);
     status.value = data.state || 'connecting';
-    qrcode.value = data.qrcode || '';
+    qrcode.value = normalizeQrcodePayload(data.qrcode);
     if (!pollTimer) {
       pollTimer = setInterval(fetchStatus, 3000);
     }

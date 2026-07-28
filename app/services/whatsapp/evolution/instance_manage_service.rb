@@ -60,7 +60,8 @@ class Whatsapp::Evolution::InstanceManageService
     ensure_webhook_media_base64!
     response = HTTParty.get(
       "#{api_base_path}/instance/connectionState/#{instance_name}",
-      headers: api_headers
+      headers: api_headers,
+      timeout: 8
     )
     state = response.parsed_response.is_a?(Hash) ? response.parsed_response.dig('instance', 'state') : nil
     state ||= response.parsed_response.is_a?(Hash) ? response.parsed_response['state'] : nil
@@ -74,7 +75,7 @@ class Whatsapp::Evolution::InstanceManageService
     Rails.logger.error "[EVOLUTION] connection_status failed: #{e.message}"
     {
       state: whatsapp_channel.provider_config['connection_status'],
-      qrcode: whatsapp_channel.provider_config['qrcode_base64'],
+      qrcode: normalize_qrcode(whatsapp_channel.provider_config['qrcode_base64']),
       instance_name: instance_name,
       error: e.message
     }
@@ -84,7 +85,8 @@ class Whatsapp::Evolution::InstanceManageService
     ensure_webhook_media_base64!(force: true)
     response = HTTParty.get(
       "#{api_base_path}/instance/connect/#{instance_name}",
-      headers: api_headers
+      headers: api_headers,
+      timeout: 8
     )
     qr = extract_qrcode(response.parsed_response)
     update_provider_config!('qrcode_base64' => qr, 'connection_status' => 'connecting') if qr.present?
@@ -102,13 +104,17 @@ class Whatsapp::Evolution::InstanceManageService
 
   def update_connection_status!(state, qrcode: nil)
     attrs = { 'connection_status' => normalize_state(state) }
-    attrs['qrcode_base64'] = qrcode if qrcode.present?
+    normalized_qr = normalize_qrcode(qrcode)
+    attrs['qrcode_base64'] = normalized_qr if normalized_qr.present?
     attrs['qrcode_base64'] = nil if %w[open connected].include?(normalize_state(state))
     update_provider_config!(attrs)
   end
 
   def update_qrcode!(qrcode)
-    update_provider_config!('qrcode_base64' => qrcode, 'connection_status' => 'qr')
+    normalized_qr = normalize_qrcode(qrcode)
+    return if normalized_qr.blank?
+
+    update_provider_config!('qrcode_base64' => normalized_qr, 'connection_status' => 'qr')
   end
 
   private
@@ -142,26 +148,44 @@ class Whatsapp::Evolution::InstanceManageService
   end
 
   def fetch_qrcode
-    cached = whatsapp_channel.provider_config['qrcode_base64']
-    return cached if cached.present?
+    cached = normalize_qrcode(whatsapp_channel.provider_config['qrcode_base64'])
+    if cached.present?
+      # Heal legacy rows that persisted the raw Evolution payload Hash
+      if whatsapp_channel.provider_config['qrcode_base64'].is_a?(Hash)
+        update_provider_config!('qrcode_base64' => cached)
+      end
+      return cached
+    end
 
     response = HTTParty.get(
       "#{api_base_path}/instance/connect/#{instance_name}",
-      headers: api_headers
+      headers: api_headers,
+      timeout: 8
     )
     qr = extract_qrcode(response.parsed_response)
     update_provider_config!('qrcode_base64' => qr) if qr.present?
     qr
   rescue StandardError
-    whatsapp_channel.provider_config['qrcode_base64']
+    normalize_qrcode(whatsapp_channel.provider_config['qrcode_base64'])
+  end
+
+  # Always return a data-URI / base64 string for the frontend <img> src.
+  # Webhooks and older caches may store the raw Evolution Hash ({ base64, code, ... }).
+  def normalize_qrcode(payload)
+    extract_qrcode(payload)
   end
 
   def extract_qrcode(payload)
     return if payload.blank?
     return payload if payload.is_a?(String) && payload.start_with?('data:image')
-    return payload['base64'] if payload.is_a?(Hash) && payload['base64'].present?
-    return payload.dig('qrcode', 'base64') if payload.is_a?(Hash)
-    return payload['code'] if payload.is_a?(Hash) && payload['code'].to_s.start_with?('data:image')
+
+    if payload.is_a?(Hash)
+      payload = payload.with_indifferent_access
+      return payload[:base64] if payload[:base64].present?
+      nested = payload[:qrcode]
+      return extract_qrcode(nested) if nested.present?
+      return payload[:code] if payload[:code].to_s.start_with?('data:image')
+    end
 
     nil
   end
