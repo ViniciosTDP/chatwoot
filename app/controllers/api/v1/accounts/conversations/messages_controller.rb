@@ -6,11 +6,16 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
   end
 
   def create
+    Current.whatsapp_inline_send = true
     user = Current.user || @resource
     mb = Messages::MessageBuilder.new(user, @conversation, params)
     @message = mb.perform
+    @message.reload
+    render status: :unprocessable_entity if @message.failed?
   rescue StandardError => e
     render_could_not_create_error(e.message)
+  ensure
+    Current.whatsapp_inline_send = nil
   end
 
   def update

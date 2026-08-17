@@ -1,8 +1,26 @@
 class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseService
   include Whatsapp::Evolution::ClientHelper
 
+  TYPING_DELAY_MIN_MS = 800
+  TYPING_DELAY_MAX_MS = 4000
+  TYPING_MS_PER_CHAR = 40
+  SEND_PRESENCE_TIMEOUT_SECONDS = 15
+
+  EVOLUTION_ERROR_DISCONNECTED = 'EVOLUTION_DISCONNECTED'
+  EVOLUTION_ERROR_BANNED = 'EVOLUTION_BANNED'
+  EVOLUTION_ERROR_UNAVAILABLE = 'EVOLUTION_UNAVAILABLE'
+  EVOLUTION_UNAVAILABLE_ERRORS = [
+    Net::OpenTimeout,
+    Net::ReadTimeout,
+    Errno::ECONNREFUSED,
+    Errno::EHOSTUNREACH,
+    SocketError,
+    Timeout::Error
+  ].freeze
+
   def send_message(phone_number, message)
     @message = message
+    maybe_simulate_typing(phone_number, message)
 
     if message.attachments.present?
       send_attachment_message(phone_number, message)
@@ -11,15 +29,21 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
     else
       send_text_message(phone_number, message)
     end
+  rescue *EVOLUTION_UNAVAILABLE_ERRORS => e
+    mark_unavailable(message, e)
+    nil
   end
 
   def send_template(phone_number, template_info, message)
-    # Evolution has no Meta HSM templates — send session text built from template params.
+    # Evolution (Baileys) has no Meta HSM templates. Proactive OS/HSM on Evolution
+    # is session text. Cloud API inboxes use WhatsappCloudService#send_template.
     body = template_info[:processed_params].presence ||
            template_info.dig(:parameters)&.map { |p| p.is_a?(Hash) ? p['text'] || p[:text] : p }&.join(' ') ||
            message&.outgoing_content
 
     return handle_template_fallback_error(message) if body.blank?
+
+    maybe_simulate_typing(phone_number, message)
 
     response = HTTParty.post(
       "#{api_base_path}/message/sendText/#{instance_name}",
@@ -30,6 +54,9 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
       }.to_json
     )
     process_response(response, message)
+  rescue *EVOLUTION_UNAVAILABLE_ERRORS => e
+    mark_unavailable(message, e)
+    nil
   end
 
   def sync_templates
@@ -87,6 +114,19 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
     nil
   end
 
+  def handle_error(response, message)
+    detail = error_message(response).to_s
+    code = classify_evolution_error(response, detail)
+    stable = [code, detail.presence].compact.join(': ')
+
+    Rails.logger.error "[EVOLUTION] send failed instance=#{instance_name} code=#{code || 'UNKNOWN'} body=#{response.body}"
+    return if message.blank? || stable.blank?
+
+    message.external_error = stable
+    message.status = :failed
+    message.save!
+  end
+
   private
 
   def api_base_path
@@ -109,6 +149,69 @@ class Whatsapp::Providers::WhatsappEvolutionService < Whatsapp::Providers::BaseS
     return if parsed.blank?
     return parsed.dig('key', 'id') if parsed.is_a?(Hash)
     return parsed.first.dig('key', 'id') if parsed.is_a?(Array) && parsed.first.is_a?(Hash)
+
+    nil
+  end
+
+  def maybe_simulate_typing(phone_number, message)
+    return unless simulate_typing?(message)
+
+    delay_ms = typing_delay_ms(message)
+    response = HTTParty.post(
+      "#{api_base_path}/chat/sendPresence/#{instance_name}",
+      headers: api_headers,
+      timeout: SEND_PRESENCE_TIMEOUT_SECONDS,
+      body: {
+        number: normalize_number(phone_number),
+        delay: delay_ms,
+        presence: 'composing'
+      }.to_json
+    )
+
+    return if response.success?
+
+    Rails.logger.error(
+      "[EVOLUTION] sendPresence failed instance=#{instance_name} status=#{response.code} body=#{response.body}"
+    )
+  rescue StandardError => e
+    Rails.logger.error("[EVOLUTION] sendPresence failed instance=#{instance_name} error=#{e.message}")
+  end
+
+  def simulate_typing?(message)
+    return false if message.blank?
+
+    attrs = (message.content_attributes || {}).with_indifferent_access
+    return true if ActiveModel::Type::Boolean.new.cast(attrs[:simulate_typing])
+    return true if attrs[:origem].to_s.casecmp('mensageria').zero?
+
+    false
+  end
+
+  def typing_delay_ms(message)
+    base = (message&.outgoing_content.to_s.length * TYPING_MS_PER_CHAR).clamp(TYPING_DELAY_MIN_MS, TYPING_DELAY_MAX_MS)
+    jitter_factor = 1 + ((rand * 0.4) - 0.2)
+    (base * jitter_factor).round.clamp(TYPING_DELAY_MIN_MS, TYPING_DELAY_MAX_MS)
+  end
+
+  def mark_unavailable(message, error)
+    Rails.logger.error(
+      "[EVOLUTION] send failed instance=#{instance_name} code=#{EVOLUTION_ERROR_UNAVAILABLE} error=#{error.message}"
+    )
+    return if message.blank?
+
+    message.external_error = "#{EVOLUTION_ERROR_UNAVAILABLE}: #{error.message}"
+    message.status = :failed
+    message.save!
+  end
+
+  def classify_evolution_error(response, detail = nil)
+    status = response.respond_to?(:code) ? response.code.to_i : 0
+    body = detail.to_s.downcase
+    body = error_message(response).to_s.downcase if body.blank?
+
+    return EVOLUTION_ERROR_BANNED if status == 403 || body.match?(/banned|forbidden|\b403\b/)
+    return EVOLUTION_ERROR_DISCONNECTED if body.match?(/disconnect|logged out|logout|not connected|connection closed|instance.*(close|offline)/)
+    return EVOLUTION_ERROR_UNAVAILABLE if status.zero? || status >= 500 || body.match?(/timeout|unavailable|econnrefused/)
 
     nil
   end

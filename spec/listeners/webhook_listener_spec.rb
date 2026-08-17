@@ -126,6 +126,27 @@ describe WebhookListener do
     end
   end
 
+  describe '#message_updated' do
+    let(:event_name) { :'message.updated' }
+
+    context 'when webhook is configured and event is subscribed' do
+      it 'triggers webhook with status and external_error' do
+        message.status = :failed
+        message.external_error = '131047: window expired'
+        webhook = create(:webhook, inbox: inbox, account: account)
+        payload = message.webhook_data.merge(event: 'message_updated')
+
+        expect(payload[:status]).to eq('failed')
+        expect(payload[:external_error]).to include('131047')
+        expect(WebhookJob).to receive(:perform_later).with(
+          webhook.url, payload, :account_webhook,
+          secret: webhook.secret, delivery_id: instance_of(String)
+        ).once
+        listener.message_updated(Events::Base.new(event_name, Time.zone.now, message: message))
+      end
+    end
+  end
+
   describe '#conversation_created' do
     let(:event_name) { :'conversation.created' }
 

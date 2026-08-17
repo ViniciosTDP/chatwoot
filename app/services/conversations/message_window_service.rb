@@ -25,7 +25,7 @@ class Conversations::MessageWindowService
     when 'Channel::Tiktok'
       tiktok_messaging_window
     when 'Channel::Whatsapp'
-      MESSAGING_WINDOW_24_HOURS
+      whatsapp_messaging_window
     when 'Channel::TwilioSms'
       twilio_messaging_window
     end
@@ -46,6 +46,19 @@ class Conversations::MessageWindowService
   # Check medium of the inbox to determine the messaging window
   def twilio_messaging_window
     @conversation.inbox.channel.medium == 'whatsapp' ? MESSAGING_WINDOW_24_HOURS : nil
+  end
+
+  # Meta Cloud / 360dialog enforce the 24h customer-care window.
+  # Evolution (Baileys) is unofficial WhatsApp Web and is not bound by that policy.
+  def whatsapp_messaging_window
+    return if evolution_provider?
+
+    MESSAGING_WINDOW_24_HOURS
+  end
+
+  def evolution_provider?
+    channel = @conversation.inbox.channel
+    channel.respond_to?(:provider) && channel.provider == 'evolution_api'
   end
 
   def messenger_messaging_window

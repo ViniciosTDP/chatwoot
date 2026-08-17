@@ -19,7 +19,7 @@ describe Whatsapp::SendOnWhatsappService do
   it 'always sends session messages for evolution_api even when can_reply? is false' do
     allow(message.conversation).to receive(:can_reply?).and_return(false)
 
-    stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+    stub_request(:post, %r{/message/sendText/cw-test-instance})
       .to_return(
         status: 200,
         body: { key: { id: 'EVO_S1' } }.to_json,

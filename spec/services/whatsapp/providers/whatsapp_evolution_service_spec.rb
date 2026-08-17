@@ -28,6 +28,7 @@ describe Whatsapp::Providers::WhatsappEvolutionService do
         .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
 
       expect(service.send_message('+5511999999999', message)).to eq('EVO_MSG_1')
+      expect(a_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')).not_to have_been_made
     end
 
     it 'sends media via sendMedia as base64 (not a public URL)' do
@@ -104,6 +105,126 @@ describe Whatsapp::Providers::WhatsappEvolutionService do
 
       expect(service.send_message('5511999999999', audio_message.reload)).to eq('EVO_MSG_1')
       expect(a_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')).not_to have_been_made
+    end
+
+    context 'when simulate typing is requested' do
+      before do
+        allow(service).to receive(:typing_delay_ms).and_return(1200)
+      end
+
+      it 'sends presence composing before text when simulate_typing is true' do
+        message.update!(content_attributes: { simulate_typing: true })
+
+        stub_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')
+          .with(body: hash_including('number' => '5511999999999', 'presence' => 'composing', 'delay' => 1200))
+          .to_return(status: 200, body: { presence: 'composing' }.to_json, headers: response_headers)
+        stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+          .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+        expect(service.send_message('+5511999999999', message.reload)).to eq('EVO_MSG_1')
+        expect(a_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')).to have_been_made.once
+        expect(a_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')).to have_been_made.once
+      end
+
+      it 'sends presence composing when origem is mensageria' do
+        message.update!(content_attributes: { origem: 'mensageria' })
+
+        stub_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')
+          .with(body: hash_including('presence' => 'composing'))
+          .to_return(status: 200, body: { presence: 'composing' }.to_json, headers: response_headers)
+        stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+          .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+        expect(service.send_message('+5511999999999', message.reload)).to eq('EVO_MSG_1')
+        expect(a_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')).to have_been_made.once
+      end
+
+      it 'still sends text when sendPresence fails' do
+        message.update!(content_attributes: { simulate_typing: true })
+
+        stub_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')
+          .to_return(status: 500, body: { error: 'instance busy' }.to_json, headers: response_headers)
+        stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+          .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+        expect(service.send_message('+5511999999999', message.reload)).to eq('EVO_MSG_1')
+        expect(a_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')).to have_been_made.once
+      end
+
+      it 'still sends text when sendPresence times out' do
+        message.update!(content_attributes: { origem: 'Mensageria' })
+
+        stub_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance').to_timeout
+        stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+          .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+        expect(service.send_message('+5511999999999', message.reload)).to eq('EVO_MSG_1')
+      end
+
+      it 'sends presence before media when simulate_typing is true' do
+        message.update!(content_attributes: { simulate_typing: true })
+        attachment = message.attachments.new(account_id: message.account_id, file_type: :image)
+        attachment.file.attach(io: Rails.root.join('spec/assets/avatar.png').open, filename: 'avatar.png', content_type: 'image/png')
+        message.save!
+
+        stub_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')
+          .to_return(status: 200, body: { presence: 'composing' }.to_json, headers: response_headers)
+        stub_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')
+          .to_return(status: 200, body: evolution_response.to_json, headers: response_headers)
+
+        expect(service.send_message('5511999999999', message.reload)).to eq('EVO_MSG_1')
+        expect(a_request(:post, 'http://evolution.test/chat/sendPresence/cw-test-instance')).to have_been_made.once
+        expect(a_request(:post, 'http://evolution.test/message/sendMedia/cw-test-instance')).to have_been_made.once
+      end
+    end
+  end
+
+  describe '#typing_delay_ms' do
+    it 'clamps delay between 800 and 4000 ms' do
+      short = create(:message, conversation: conversation, message_type: :outgoing, content: 'oi',
+                               inbox: whatsapp_channel.inbox)
+      long = create(:message, conversation: conversation, message_type: :outgoing, content: 'a' * 500,
+                              inbox: whatsapp_channel.inbox)
+
+      expect(service.send(:typing_delay_ms, short)).to be_between(800, 4000)
+      expect(service.send(:typing_delay_ms, long)).to be_between(800, 4000)
+    end
+  end
+
+  describe 'instance error classification' do
+    it 'sets EVOLUTION_DISCONNECTED when the instance is logged out' do
+      stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+        .to_return(
+          status: 400,
+          body: { response: { message: ['The instance is not connected'] } }.to_json,
+          headers: response_headers
+        )
+
+      expect(service.send_message('+5511999999999', message)).to be_nil
+      expect(message.reload.status).to eq('failed')
+      expect(message.external_error).to include('EVOLUTION_DISCONNECTED')
+      expect(message.external_error).to match(/not connected|disconnected|logged out/i)
+    end
+
+    it 'sets EVOLUTION_BANNED when Evolution returns forbidden' do
+      stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance')
+        .to_return(
+          status: 403,
+          body: { message: 'forbidden: number banned' }.to_json,
+          headers: response_headers
+        )
+
+      expect(service.send_message('+5511999999999', message)).to be_nil
+      expect(message.reload.status).to eq('failed')
+      expect(message.external_error).to include('EVOLUTION_BANNED')
+    end
+
+    it 'sets EVOLUTION_UNAVAILABLE when Evolution times out' do
+      stub_request(:post, 'http://evolution.test/message/sendText/cw-test-instance').to_timeout
+
+      expect(service.send_message('+5511999999999', message)).to be_nil
+      expect(message.reload.status).to eq('failed')
+      expect(message.external_error).to include('EVOLUTION_UNAVAILABLE')
     end
   end
 

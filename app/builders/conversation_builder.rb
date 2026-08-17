@@ -8,9 +8,12 @@ class ConversationBuilder
   private
 
   def look_up_exising_conversation
-    return unless @contact_inbox.inbox.lock_to_single_conversation?
+    return @contact_inbox.conversations.last if @contact_inbox.inbox.lock_to_single_conversation?
 
-    @contact_inbox.conversations.last
+    # WhatsApp Cloud + Evolution: never open a second thread for the same ContactInbox.
+    return unless @contact_inbox.inbox.whatsapp?
+
+    @contact_inbox.conversations.open.order(last_activity_at: :desc).first
   end
 
   def create_new_conversation

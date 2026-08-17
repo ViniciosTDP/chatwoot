@@ -33,7 +33,12 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
     name, namespace, lang_code, processed_parameters = processor.call
 
     if name.blank?
-      message.update!(status: :failed, external_error: 'Template not found or invalid template name')
+      error = if template_params.present?
+                'Template not found or invalid template name'
+              else
+                '131047: Message failed to send because more than 24 hours have passed'
+              end
+      message.update!(status: :failed, external_error: error)
       return
     end
 

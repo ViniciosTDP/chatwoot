@@ -39,6 +39,16 @@ describe Whatsapp::Providers::WhatsappCloudService do
         expect(service.send_message('+123456789', message)).to eq 'message_id'
       end
 
+      it 'ignores simulate_typing / origem mensageria and still sends text to Cloud API' do
+        message.update!(content_attributes: { simulate_typing: true, origem: 'mensageria' })
+
+        stub_request(:post, 'https://graph.facebook.com/v13.0/123456789/messages')
+          .to_return(status: 200, body: whatsapp_response.to_json, headers: response_headers)
+
+        expect(service.send_message('+123456789', message.reload)).to eq 'message_id'
+        expect(a_request(:post, %r{chat/sendPresence})).not_to have_been_made
+      end
+
       it 'calls message endpoints for a reply to messages' do
         stub_request(:post, 'https://graph.facebook.com/v13.0/123456789/messages')
           .with(

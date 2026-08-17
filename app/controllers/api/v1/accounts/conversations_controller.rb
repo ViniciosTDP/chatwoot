@@ -37,10 +37,15 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
   def show; end
 
   def create
+    Current.whatsapp_inline_send = true
     ActiveRecord::Base.transaction do
       @conversation = ConversationBuilder.new(params: params, contact_inbox: @contact_inbox).perform
       Messages::MessageBuilder.new(Current.user, @conversation, params[:message]).perform if params[:message].present?
     end
+    @conversation.reload
+    render status: :unprocessable_entity if last_inline_whatsapp_message_failed?
+  ensure
+    Current.whatsapp_inline_send = nil
   end
 
   def update
@@ -235,6 +240,13 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
 
   def assignee?
     @conversation.assignee_id? && Current.user == @conversation.assignee
+  end
+
+  def last_inline_whatsapp_message_failed?
+    return false unless @conversation.inbox.whatsapp?
+    return false if params[:message].blank?
+
+    @conversation.messages.outgoing.last&.failed?
   end
 end
 

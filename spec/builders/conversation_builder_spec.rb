@@ -80,5 +80,27 @@ describe ConversationBuilder do
         expect(conversation.id).to eq(existing_conversation.id)
       end
     end
+
+    context 'when WhatsApp inbox has an open conversation' do
+      let!(:whatsapp_channel) { create(:channel_whatsapp, account: account, sync_templates: false, validate_provider_config: false) }
+      let!(:whatsapp_inbox) { whatsapp_channel.inbox }
+      let(:contact_whatsapp_inbox) { create(:contact_inbox, contact: contact, inbox: whatsapp_inbox) }
+
+      it 'returns the existing open conversation instead of creating another' do
+        existing = create(:conversation, contact_inbox: contact_whatsapp_inbox, inbox: whatsapp_inbox, contact: contact, status: :open)
+        conversation = described_class.new(contact_inbox: contact_whatsapp_inbox, params: {}).perform
+
+        expect(conversation.id).to eq(existing.id)
+        expect(Conversation.where(contact_inbox_id: contact_whatsapp_inbox.id).count).to eq(1)
+      end
+
+      it 'creates a new conversation when the previous one is resolved' do
+        create(:conversation, contact_inbox: contact_whatsapp_inbox, inbox: whatsapp_inbox, contact: contact, status: :resolved)
+        conversation = described_class.new(contact_inbox: contact_whatsapp_inbox, params: {}).perform
+
+        expect(conversation).to be_open
+        expect(Conversation.where(contact_inbox_id: contact_whatsapp_inbox.id).count).to eq(2)
+      end
+    end
   end
 end

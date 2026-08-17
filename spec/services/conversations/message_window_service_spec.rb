@@ -437,6 +437,29 @@ RSpec.describe Conversations::MessageWindowService do
     end
   end
 
+  describe 'on Evolution WhatsApp channels' do
+    let!(:whatsapp_channel) { create(:channel_whatsapp, provider: 'evolution_api', sync_templates: false, validate_provider_config: false) }
+    let!(:whatsapp_inbox) { whatsapp_channel.inbox }
+    let!(:conversation) { create(:conversation, inbox: whatsapp_inbox, account: whatsapp_channel.account) }
+
+    it 'allows reply without a prior incoming message' do
+      service = described_class.new(conversation)
+      expect(service.can_reply?).to be true
+    end
+
+    it 'allows reply when the last incoming message is older than 24 hours' do
+      create(
+        :message,
+        account: conversation.account,
+        inbox: whatsapp_inbox,
+        conversation: conversation,
+        created_at: 25.hours.ago
+      )
+      service = described_class.new(conversation)
+      expect(service.can_reply?).to be true
+    end
+  end
+
   describe 'on Web widget channels' do
     let!(:widget_channel) { create(:channel_widget) }
     let!(:widget_inbox) { create(:inbox, channel: widget_channel, account: widget_channel.account) }

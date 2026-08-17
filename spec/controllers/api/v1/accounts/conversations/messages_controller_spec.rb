@@ -179,6 +179,65 @@ RSpec.describe 'Conversation Messages API', type: :request do
         expect(conversation.messages.first.content_type).to eq(params[:content_type])
       end
     end
+
+    context 'when WhatsApp Cloud API refuses the message' do
+      let(:agent) { create(:user, account: account, role: :agent) }
+      let(:whatsapp_channel) { create(:channel_whatsapp, provider: 'whatsapp_cloud', account: account, sync_templates: false, validate_provider_config: false) }
+      let(:whatsapp_inbox) { whatsapp_channel.inbox }
+      let(:conversation) { create(:conversation, inbox: whatsapp_inbox, account: account) }
+
+      before do
+        create(:inbox_member, inbox: whatsapp_inbox, user: agent)
+        stub_request(:post, %r{graph.facebook.com/.*/messages})
+          .to_return(
+            status: 400,
+            headers: { 'Content-Type' => 'application/json' },
+            body: {
+              error: {
+                message: 'Message failed to send because more than 24 hours have passed',
+                code: 131047
+              }
+            }.to_json
+          )
+      end
+
+      it 'returns 422 with status failed and the Meta error code' do
+        post api_v1_account_conversation_messages_url(account_id: account.id, conversation_id: conversation.display_id),
+             params: { content: 'OS criada' },
+             headers: agent.create_new_auth_token,
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = response.parsed_body
+        expect(body['status']).to eq('failed')
+        expect(body['external_error']).to include('131047')
+      end
+
+      it 'sends a template when template_params are present' do
+        stub_request(:post, %r{graph.facebook.com/.*/messages})
+          .to_return(
+            status: 200,
+            headers: { 'Content-Type' => 'application/json' },
+            body: { messages: [{ id: 'wamid.HSM1' }] }.to_json
+          )
+
+        post api_v1_account_conversation_messages_url(account_id: account.id, conversation_id: conversation.display_id),
+             params: {
+               content: 'OS 4025 criada',
+               template_params: {
+                 name: 'os_criada',
+                 language: 'pt_BR',
+                 category: 'UTILITY',
+                 processed_params: { '1' => '4025', '2' => '14/08/2026' }
+               }
+             },
+             headers: agent.create_new_auth_token,
+             as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(conversation.messages.last.additional_attributes['template_params']['name']).to eq('os_criada')
+      end
+    end
   end
 
   describe 'GET /api/v1/accounts/{account.id}/conversations/:id/messages' do

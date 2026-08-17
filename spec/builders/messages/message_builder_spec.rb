@@ -76,6 +76,50 @@ describe Messages::MessageBuilder do
       end
     end
 
+    context 'when simulate_typing is sent at the message root' do
+      let(:params) do
+        ActionController::Parameters.new({
+                                           content: 'test',
+                                           simulate_typing: true
+                                         })
+      end
+
+      it 'persists simulate_typing on content_attributes' do
+        attrs = message_builder.content_attributes.with_indifferent_access
+        expect(attrs[:simulate_typing]).to be(true)
+      end
+    end
+
+    context 'when origem mensageria is sent in content_attributes' do
+      let(:params) do
+        ActionController::Parameters.new({
+                                           content: 'test',
+                                           content_attributes: { origem: 'mensageria', simulate_typing: true }
+                                         })
+      end
+
+      it 'persists origem and simulate_typing' do
+        attrs = message_builder.content_attributes.with_indifferent_access
+        expect(attrs[:origem]).to eq('mensageria')
+        expect(attrs[:simulate_typing]).to be(true)
+      end
+    end
+
+    context 'when content_attributes already has simulate_typing and root also sends it' do
+      let(:params) do
+        ActionController::Parameters.new({
+                                           content: 'test',
+                                           simulate_typing: false,
+                                           content_attributes: { simulate_typing: true }
+                                         })
+      end
+
+      it 'keeps content_attributes simulate_typing' do
+        attrs = message_builder.content_attributes.with_indifferent_access
+        expect(attrs[:simulate_typing]).to be(true)
+      end
+    end
+
     context 'when content_attributes is an invalid JSON string' do
       let(:params) do
         ActionController::Parameters.new({

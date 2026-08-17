@@ -49,9 +49,17 @@ class Whatsapp::Providers::BaseService
     error_message = error_message(response)
     return if error_message.blank?
 
-    message.external_error = error_message
+    code = provider_error_code(response)
+    message.external_error = [code, error_message].compact.join(': ')
     message.status = :failed
     message.save!
+  end
+
+  def provider_error_code(response)
+    parsed = response.respond_to?(:parsed_response) ? response.parsed_response : nil
+    return unless parsed.is_a?(Hash)
+
+    parsed.dig('error', 'code') || parsed.dig('error', 'error_subcode') || parsed.dig('error', 'error_data', 'details')
   end
 
   def create_buttons(items)

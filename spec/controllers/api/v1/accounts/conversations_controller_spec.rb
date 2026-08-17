@@ -479,6 +479,25 @@ RSpec.describe 'Conversations API', type: :request do
           expect(account.conversations.find_by(display_id: response_data[:id]).messages.outgoing.first.content).to eq 'hi'
         end
 
+        it 'reuses an existing open WhatsApp conversation for the same contact and inbox' do
+          whatsapp_channel = create(:channel_whatsapp, account: account, sync_templates: false, validate_provider_config: false)
+          whatsapp_inbox = whatsapp_channel.inbox
+          create(:inbox_member, user: agent, inbox: whatsapp_inbox)
+          whatsapp_contact_inbox = create(:contact_inbox, contact: contact, inbox: whatsapp_inbox)
+          existing = create(:conversation, account: account, inbox: whatsapp_inbox, contact: contact,
+                                           contact_inbox: whatsapp_contact_inbox, status: :open)
+
+          post "/api/v1/accounts/#{account.id}/conversations",
+               headers: agent.create_new_auth_token,
+               params: { contact_id: contact.id, inbox_id: whatsapp_inbox.id, source_id: whatsapp_contact_inbox.source_id },
+               as: :json
+
+          expect(response).to have_http_status(:success)
+          response_data = JSON.parse(response.body, symbolize_names: true)
+          expect(response_data[:id]).to eq(existing.display_id)
+          expect(Conversation.where(contact_inbox_id: whatsapp_contact_inbox.id).count).to eq(1)
+        end
+
         it 'calls contact inbox builder if contact_id and inbox_id is present' do
           builder = double
           allow(Rails.configuration.dispatcher).to receive(:dispatch)

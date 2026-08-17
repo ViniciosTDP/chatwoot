@@ -40,12 +40,34 @@ class Messages::MessageBuilder
   # - Returns an empty hash if content is not present, if there's a parsing error, or if it's an unexpected type.
   def content_attributes
     params = convert_to_hash(@params)
+    attrs = extract_raw_content_attributes(params)
+    merge_simulate_typing_from_params(attrs, params)
+  end
+
+  def extract_raw_content_attributes(params)
     content_attributes = params.fetch(:content_attributes, {})
 
-    return safe_parse_json(content_attributes) if content_attributes.is_a?(String)
-    return content_attributes if content_attributes.is_a?(Hash)
+    parsed = if content_attributes.is_a?(String)
+               safe_parse_json(content_attributes)
+             elsif content_attributes.is_a?(Hash)
+               content_attributes
+             else
+               {}
+             end
 
-    {}
+    parsed.respond_to?(:with_indifferent_access) ? parsed.with_indifferent_access : {}
+  end
+
+  # Account API: mensageria may send simulate_typing at the message root (Option B)
+  # or inside content_attributes (Option A / origem: mensageria). Persist on Message
+  # so the Evolution provider can emit presence composing before sendText/sendMedia.
+  def merge_simulate_typing_from_params(attrs, params)
+    params = params.with_indifferent_access if params.respond_to?(:with_indifferent_access)
+    return attrs unless params.key?(:simulate_typing)
+    return attrs if attrs.key?(:simulate_typing)
+
+    attrs[:simulate_typing] = ActiveModel::Type::Boolean.new.cast(params[:simulate_typing])
+    attrs
   end
 
   def process_attachments

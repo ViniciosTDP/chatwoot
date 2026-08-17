@@ -192,7 +192,9 @@ class Message < ApplicationRecord
       message_type: message_type,
       private: private,
       sender: sender.try(:webhook_data),
-      source_id: source_id
+      source_id: source_id,
+      status: status,
+      external_error: external_error
     }
     data[:attachments] = attachments.map(&:push_event_data) if attachments.present?
     data
@@ -396,9 +398,19 @@ class Message < ApplicationRecord
   end
 
   def send_reply
+    # Account API waits for the WhatsApp provider so the HTTP response can expose status=failed.
+    if inline_whatsapp_send?
+      ::SendReplyJob.perform_now(id)
+      return
+    end
+
     # FIXME: Giving it few seconds for the attachment to be uploaded to the service
     # active storage attaches the file only after commit
     attachments.blank? ? ::SendReplyJob.perform_later(id) : ::SendReplyJob.set(wait: 2.seconds).perform_later(id)
+  end
+
+  def inline_whatsapp_send?
+    Current.whatsapp_inline_send && inbox.whatsapp? && attachments.blank?
   end
 
   def reopen_conversation

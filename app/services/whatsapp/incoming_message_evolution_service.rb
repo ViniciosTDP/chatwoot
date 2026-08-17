@@ -249,7 +249,8 @@ class Whatsapp::IncomingMessageEvolutionService
   end
 
   def find_or_create_conversation(contact, contact_inbox, jid)
-    conversation = Conversation.find_by(inbox_id: inbox.id, contact_id: contact.id)
+    conversation = Conversation.where(inbox_id: inbox.id, contact_id: contact.id).open.order(last_activity_at: :desc).first
+    conversation ||= Conversation.find_by(inbox_id: inbox.id, contact_id: contact.id)
     return conversation if conversation.present?
 
     Conversation.create!(
