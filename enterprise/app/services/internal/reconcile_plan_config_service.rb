@@ -5,8 +5,9 @@ class Internal::ReconcilePlanConfigService
 
     create_premium_config_reset_warning if premium_config_reset_required?
 
+    # Account premium flags (Captain, SLA, etc.) are owned by Super Admin.
+    # Mass-disabling them here used to undo those checkboxes on every Hub sync.
     reconcile_premium_config
-    reconcile_premium_features
   end
 
   private
@@ -42,18 +43,6 @@ class Internal::ReconcilePlanConfigService
       next if existing_config&.value == new_config[:value]
 
       existing_config&.update!(value: new_config[:value])
-    end
-  end
-
-  def premium_features
-    @premium_features ||= YAML.safe_load(File.read("#{config_path}/premium_features.yml")).freeze
-  end
-
-  def reconcile_premium_features
-    Account.find_in_batches do |accounts|
-      accounts.each do |account|
-        account.disable_features!(*premium_features)
-      end
     end
   end
 end

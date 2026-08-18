@@ -66,6 +66,20 @@ RSpec.describe 'Super Admin accounts API', type: :request do
         expect(editor_select.at_css('option[value=""]').text.squish).to eq("Use default: #{default_model} (#{default_model_id})")
       end
 
+      it 'lets Super Admin toggle premium features such as Captain', if: ChatwootApp.enterprise? do
+        allow(ChatwootHub).to receive(:pricing_plan).and_return('community')
+        sign_in(super_admin, scope: :super_admin)
+
+        get "/super_admin/accounts/#{account.id}/edit"
+
+        document = Nokogiri::HTML(response.body)
+        captain_checkbox = document.at_css('input[name="enabled_features[feature_captain_integration]"]')
+
+        expect(response).to have_http_status(:success)
+        expect(captain_checkbox).to be_present
+        expect(captain_checkbox['disabled']).to be_blank
+      end
+
       it 'shows the Captain V2 assistant default in the model selector', if: ChatwootApp.enterprise? do
         account.enable_features!('captain_integration_v2')
         sign_in(super_admin, scope: :super_admin)
@@ -85,6 +99,29 @@ RSpec.describe 'Super Admin accounts API', type: :request do
 
   describe 'PATCH /super_admin/accounts/{account_id}' do
     context 'when it is an authenticated user' do
+      it 'enables Captain when the Super Admin checks the premium feature', if: ChatwootApp.enterprise? do
+        account.disable_features!('captain_integration', 'captain_integration_v2')
+        sign_in(super_admin, scope: :super_admin)
+
+        patch "/super_admin/accounts/#{account.id}",
+              params: {
+                account: {
+                  name: account.name,
+                  locale: account.locale,
+                  status: account.status
+                },
+                enabled_features: {
+                  feature_agent_bots: true,
+                  feature_captain_integration: true,
+                  feature_captain_integration_v2: true
+                }
+              }
+
+        expect(response).to have_http_status(:redirect)
+        expect(account.reload).to be_feature_enabled('captain_integration')
+        expect(account).to be_feature_enabled('captain_integration_v2')
+      end
+
       it 'updates Captain model overrides without changing unrelated settings' do
         account.update!(
           captain_models: { 'editor' => 'gpt-4.1' },
