@@ -221,15 +221,15 @@ Verify:
   curl -I https://${DOMAIN}/
   curl -I http://${DOMAIN}/    # should redirect to HTTPS
 
-Update Chatwoot .env on this VPS (/home/ubuntu/chatwoot/.env):
+Update Chatwoot .env on this VPS (/root/chatwoot/.env or /home/ubuntu/chatwoot/.env):
   FRONTEND_URL=https://${DOMAIN}
   FORCE_SSL=true
 
-**Importante:** sem atualizar o `FRONTEND_URL` e reiniciar `rails`/`sidekiq`, o SSO continua gerando links com o host antigo (IP:3000). O backend TDP também reescreve a URL para `INPERACHAT_BASE_URL`, mas o Chatwoot precisa do domínio correto.
+Importante: sem atualizar FRONTEND_URL e reiniciar rails/sidekiq, o SSO continua gerando links com o host antigo (IP:3000). O backend TDP tambem reescreve a URL para INPERACHAT_BASE_URL, mas o Chatwoot precisa do dominio correto.
 
-Then restart the app:
-  cd /home/ubuntu/chatwoot
-  docker-compose -f docker-compose.production.inpera.yml restart rails sidekiq
+Then restart the app (HostGator: use docker compose with a space, not docker-compose):
+  cd /root/chatwoot
+  docker compose -f docker-compose.production.inpera.yml up -d rails sidekiq
 
 Update integrations (TDP / Retaguarda) to use https://${DOMAIN} instead of http://IP:3000.
 

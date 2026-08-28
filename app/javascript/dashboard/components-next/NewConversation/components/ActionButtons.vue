@@ -15,6 +15,7 @@ import ContentTemplateSelector from './ContentTemplateSelector.vue';
 const props = defineProps({
   attachedFiles: { type: Array, default: () => [] },
   isWhatsappInbox: { type: Boolean, default: false },
+  isEvolutionWhatsappInbox: { type: Boolean, default: false },
   isEmailOrWebWidgetInbox: { type: Boolean, default: false },
   isTwilioSmsInbox: { type: Boolean, default: false },
   isTwilioWhatsAppInbox: { type: Boolean, default: false },
@@ -74,12 +75,17 @@ const showTwilioContentTemplates = computed(() => {
 
 const shouldShowEmojiButton = computed(() => {
   return (
-    !props.isWhatsappInbox && !props.isTwilioWhatsAppInbox && !props.hasNoInbox
+    (!props.isWhatsappInbox || props.isEvolutionWhatsappInbox) &&
+    !props.isTwilioWhatsAppInbox &&
+    !props.hasNoInbox
   );
 });
 
 const isRegularMessageMode = computed(() => {
-  return !props.isWhatsappInbox && !props.isTwilioWhatsAppInbox;
+  return (
+    (!props.isWhatsappInbox || props.isEvolutionWhatsappInbox) &&
+    !props.isTwilioWhatsAppInbox
+  );
 });
 
 const shouldShowSignatureButton = computed(() => {

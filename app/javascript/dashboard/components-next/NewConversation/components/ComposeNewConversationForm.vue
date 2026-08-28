@@ -73,10 +73,21 @@ const state = props.formState || {
   attachedFiles: [],
 };
 
+const whatsAppProvider = computed(() => props.targetInbox?.provider || '');
+
+const isEvolutionWhatsapp = computed(
+  () =>
+    props.targetInbox?.channelType === INBOX_TYPES.WHATSAPP &&
+    whatsAppProvider.value === 'evolution_api'
+);
+
 const inboxTypes = computed(() => ({
   isEmail: props.targetInbox?.channelType === INBOX_TYPES.EMAIL,
   isTwilio: props.targetInbox?.channelType === INBOX_TYPES.TWILIO,
   isWhatsapp: props.targetInbox?.channelType === INBOX_TYPES.WHATSAPP,
+  isCloudWhatsapp:
+    props.targetInbox?.channelType === INBOX_TYPES.WHATSAPP &&
+    !isEvolutionWhatsapp.value,
   isWebWidget: props.targetInbox?.channelType === INBOX_TYPES.WEB,
   isApi: props.targetInbox?.channelType === INBOX_TYPES.API,
   isEmailOrWebWidget:
@@ -109,7 +120,11 @@ const effectiveChannelType = computed(() =>
 const validationRules = computed(() => ({
   selectedContact: { required },
   targetInbox: { required },
-  message: { required: requiredIf(!inboxTypes.value.isWhatsapp) },
+  message: {
+    required: requiredIf(
+      !inboxTypes.value.isWhatsapp || isEvolutionWhatsapp.value
+    ),
+  },
   subject: { required: requiredIf(inboxTypes.value.isEmail) },
 }));
 
@@ -336,7 +351,7 @@ const handleSendTwilioMessage = async ({ message, templateParams }) => {
 
 const shouldShowMessageEditor = computed(() => {
   return (
-    !inboxTypes.value.isWhatsapp &&
+    (!inboxTypes.value.isWhatsapp || isEvolutionWhatsapp.value) &&
     !showNoInboxAlert.value &&
     !inboxTypes.value.isTwilioWhatsapp
   );
@@ -438,7 +453,8 @@ useKeyboardEvents({
     <ActionButtons
       v-else
       :attached-files="state.attachedFiles"
-      :is-whatsapp-inbox="inboxTypes.isWhatsapp"
+      :is-whatsapp-inbox="inboxTypes.isCloudWhatsapp"
+      :is-evolution-whatsapp-inbox="isEvolutionWhatsapp"
       :is-email-or-web-widget-inbox="inboxTypes.isEmailOrWebWidget"
       :is-twilio-sms-inbox="inboxTypes.isTwilioSMS"
       :is-twilio-whats-app-inbox="inboxTypes.isTwilioWhatsapp"
