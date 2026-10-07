@@ -5,7 +5,8 @@ import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useFileUpload } from 'dashboard/composables/useFileUpload';
 import { vOnClickOutside } from '@vueuse/components';
 import { useEventListener } from '@vueuse/core';
-import { ALLOWED_FILE_TYPES } from 'shared/constants/messages';
+import { getAllowedFileTypesByChannel } from '@chatwoot/utils';
+import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import FileUpload from 'vue-upload-component';
 import Button from 'dashboard/components-next/button/Button.vue';
@@ -94,6 +95,21 @@ const shouldShowSignatureButton = computed(() => {
   );
 });
 
+const shouldShowAttachButton = computed(() => {
+  return (
+    !props.hasNoInbox &&
+    !props.voiceEnabled &&
+    (!props.hasSelectedInbox ||
+      props.isEmailOrWebWidgetInbox ||
+      props.isEvolutionWhatsappInbox ||
+      props.channelType === INBOX_TYPES.API)
+  );
+});
+
+const allowedFileTypes = computed(() =>
+  getAllowedFileTypesByChannel({ channelType: props.channelType })
+);
+
 const setSignature = () => {
   if (props.messageSignature) {
     if (sendWithSignature.value) {
@@ -177,7 +193,7 @@ const keyboardEvents = {
 useKeyboardEvents(keyboardEvents);
 
 const onPaste = e => {
-  if (!props.isEmailOrWebWidgetInbox) return;
+  if (!shouldShowAttachButton.value || !props.hasSelectedInbox) return;
 
   const files = e.clipboardData?.files;
   if (!files?.length) return;
@@ -230,11 +246,13 @@ useEventListener(document, 'paste', onPaste);
         />
       </div>
       <FileUpload
-        v-if="isEmailOrWebWidgetInbox"
+        v-if="shouldShowAttachButton"
         ref="uploadAttachment"
+        v-tooltip.top="t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
         input-id="composeNewConversationAttachment"
         :size="4096 * 4096"
-        :accept="ALLOWED_FILE_TYPES"
+        :accept="allowedFileTypes"
+        :disabled="!hasSelectedInbox || isLoading"
         multiple
         :drop-directory="false"
         :data="{
@@ -245,10 +263,12 @@ useEventListener(document, 'paste', onPaste);
         @input-file="onFileUpload"
       >
         <Button
-          icon="i-lucide-plus"
+          icon="i-ph-paperclip"
+          :aria-label="t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
           color="slate"
           size="sm"
           class="!w-10 relative"
+          :disabled="!hasSelectedInbox || isLoading"
         />
       </FileUpload>
       <Button

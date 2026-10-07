@@ -122,7 +122,8 @@ const validationRules = computed(() => ({
   targetInbox: { required },
   message: {
     required: requiredIf(
-      !inboxTypes.value.isWhatsapp || isEvolutionWhatsapp.value
+      (!inboxTypes.value.isWhatsapp || isEvolutionWhatsapp.value) &&
+        state.attachedFiles.length === 0
     ),
   },
   subject: { required: requiredIf(inboxTypes.value.isEmail) },

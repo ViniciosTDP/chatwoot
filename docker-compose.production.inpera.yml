@@ -104,7 +104,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      - SERVER_URL=${EVOLUTION_API_PUBLIC_URL:-http://192.159.110.58:8080}
+      - SERVER_URL=${EVOLUTION_API_PUBLIC_URL:-http://129.121.37.112:8080}
       - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
       - DATABASE_ENABLED=true
       - DATABASE_PROVIDER=postgresql
