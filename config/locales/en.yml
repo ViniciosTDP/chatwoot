@@ -636,3 +636,50 @@ en:
       no_subscriptions_to_test: 'Select at least one subscription to test.'
       no_subscriptions_to_delete: 'Select at least one subscription to delete.'
       subscriptions_deleted: "Deleted %{count} subscription(s). The user's device(s) will re-register on next app launch."
+  report_pdf:
+    types:
+      conversation: Conversations
+      agent: Agents
+      label: Labels
+      inbox: Inboxes
+      team: Teams
+      csat: CSAT
+      sla: SLA
+    groups:
+      day: Day
+      week: Week
+      month: Month
+      year: Year
+    period: Period
+    timezone: Timezone
+    group_by: Group by
+    business_hours: Business hours
+    'yes': 'Yes'
+    'no': 'No'
+    interval: Interval
+    details: Details
+    processed_at: Data processed at
+    no_data: No data in the selected period
+    top_ten: Top 10 by conversation volume (all entities are included in the table)
+    responses: Responses
+    satisfaction: Satisfaction score
+    response_rate: Response rate
+    sla_total: Total SLA applications
+    sla_missed: Applications with breaches
+    sla_without_misses: Applications without breaches (including active)
+    sla_hit_rate: Hit rate
+    not_available: Not available
+    csat_headers:
+      agent_name: Agent name
+      rating: Rating
+      feedback: Comment
+      contact_name: Contact name
+      contact_email_address: Contact email
+      contact_phone_number: Contact phone
+      link_to_the_conversation: Conversation
+      recorded_at: Recorded at
+      review_notes: Review notes
+    sla_events:
+      frt: First response time
+      nrt: Next response time
+      rt: Resolution time

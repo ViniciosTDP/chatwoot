@@ -199,7 +199,12 @@ const downloadReports = () => {
   }
 };
 
-defineExpose({ downloadReports });
+const getExportFilters = () => ({
+  from: from.value,
+  to: to.value,
+  businessHours: businessHours.value,
+});
+defineExpose({ downloadReports, getExportFilters });
 </script>
 
 <template>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale.to_s.tr('_', '-') %>">
+<head><meta charset="UTF-8"><title><%= pdf_text("report_pdf.types.#{export.report_type}") %></title></head>
+<body class="font-sans text-[10px] text-slate-800 bg-white">
+  <h1 class="text-center text-xl font-bold"><%= export.account.name %></h1>
+  <h2 class="text-center text-lg border-b border-slate-400 pb-3 mb-4"><%= pdf_text("report_pdf.types.#{export.report_type}") %></h2>
+  <div class="grid grid-cols-3 gap-2 mb-4">
+    <% data[:filters].each do |label, value| %>
+      <p><strong><%= label %>:</strong> <%= value %></p>
+    <% end %>
+  </div>
+  <div class="grid grid-cols-4 gap-3 mb-5">
+    <% data[:metrics].each do |label, value| %>
+      <div class="border border-slate-200 rounded p-3 break-inside-avoid"><p><%= label %></p><strong class="text-lg"><%= value %></strong></div>
+    <% end %>
+  </div>
+  <% data[:charts].each do |chart| %>
+    <section class="mb-5 break-inside-avoid">
+      <% if chart[:title] %><h3 class="font-bold mb-2"><%= chart[:title] %></h3><% end %>
+      <%= pdf_chart(chart) %>
+    </section>
+  <% end %>
+  <h3 class="font-bold text-base mb-3"><%= pdf_text('report_pdf.details') %></h3>
+  <% if data[:rows].empty? %>
+    <p><%= pdf_text('report_pdf.no_data') %></p>
+  <% else %>
+    <%# Bounded tables avoid Chromium's memory spike when paginating thousands of rows. %>
+    <% data[:rows].each_slice(100) do |rows| %>
+    <table class="w-full table-fixed border-collapse text-[9px]">
+      <thead class="table-header-group"><tr><% data[:headers].each do |header| %><th class="text-left bg-slate-100 border-b border-slate-400 p-2"><%= header %></th><% end %></tr></thead>
+      <tbody><% rows.each do |row| %><tr><% row.each do |value| %><td class="align-top border-b border-slate-200 p-2 break-words whitespace-pre-wrap"><%= pdf_cell(value) %></td><% end %></tr><% end %></tbody>
+    </table>
+    <% end %>
+  <% end %>
+</body>
+</html>

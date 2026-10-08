@@ -46,6 +46,7 @@
 #
 
 class User < ApplicationRecord
+  has_many :report_exports, dependent: :destroy
   include AccessTokenable
   include Avatarable
   # Include default devise modules.

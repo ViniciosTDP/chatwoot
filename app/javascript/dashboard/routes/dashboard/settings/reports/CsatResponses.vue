@@ -7,7 +7,7 @@ import CsatFilters from './components/Csat/CsatFilters.vue';
 import { generateFileName } from '../../../../helper/downloadHelper';
 import { REPORTS_EVENTS } from '../../../../helper/AnalyticsHelper/events';
 import { FEATURE_FLAGS } from '../../../../featureFlags';
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import ReportDownload from './components/ReportDownload.vue';
 import ReportHeader from './components/ReportHeader.vue';
 
 export default {
@@ -17,7 +17,7 @@ export default {
     CsatTable,
     CsatFilters,
     ReportHeader,
-    V4Button,
+    ReportDownload,
   },
   data() {
     return {
@@ -116,11 +116,11 @@ export default {
 
 <template>
   <ReportHeader :header-title="$t('CSAT_REPORTS.HEADER')">
-    <V4Button
+    <ReportDownload
       :label="$t('CSAT_REPORTS.DOWNLOAD')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadReports"
+      report-type="csat"
+      :get-filters="() => requestPayload"
+      @csv="downloadReports"
     />
   </ReportHeader>
 

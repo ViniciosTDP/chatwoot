@@ -620,3 +620,50 @@ pt_BR:
       no_subscriptions_to_test: 'Selecione pelo menos uma assinatura para teste.'
       no_subscriptions_to_delete: 'Selecione pelo menos uma assinatura para excluir.'
       subscriptions_deleted: "Excluída(s) %{count} inscrição(ões). O(s) dispositivo(s) do usuário será(ão) registrado(s) novamente na próxima inicialização do aplicativo."
+  report_pdf:
+    types:
+      conversation: Conversas
+      agent: Agentes
+      label: Etiquetas
+      inbox: Caixas de entrada
+      team: Times
+      csat: Satisfação do cliente (CSAT)
+      sla: Acordos de nível de serviço (SLA)
+    groups:
+      day: Dia
+      week: Semana
+      month: Mês
+      year: Ano
+    period: Período
+    timezone: Fuso horário
+    group_by: Agrupamento
+    business_hours: Horário comercial
+    'yes': Sim
+    'no': Não
+    interval: Intervalo
+    details: Detalhes
+    processed_at: Dados processados em
+    no_data: Nenhum dado no período selecionado
+    top_ten: 10 maiores volumes de conversas (todas as entidades constam na tabela)
+    responses: Respostas
+    satisfaction: Índice de satisfação
+    response_rate: Taxa de resposta
+    sla_total: Total de aplicações de SLA
+    sla_missed: Aplicações com violações
+    sla_without_misses: Aplicações sem violações (incluindo ativas)
+    sla_hit_rate: Taxa de cumprimento
+    not_available: Não disponível
+    csat_headers:
+      agent_name: Nome do agente
+      rating: Avaliação
+      feedback: Comentário
+      contact_name: Nome do contato
+      contact_email_address: E-mail do contato
+      contact_phone_number: Telefone do contato
+      link_to_the_conversation: Conversa
+      recorded_at: Registrado em
+      review_notes: Notas de avaliação
+    sla_events:
+      frt: Tempo de primeira resposta
+      nrt: Tempo da próxima resposta
+      rt: Tempo de resolução

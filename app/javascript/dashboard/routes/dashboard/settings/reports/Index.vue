@@ -1,5 +1,5 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import ReportDownload from './components/ReportDownload.vue';
 import { useAlert, useTrack } from 'dashboard/composables';
 import ReportFilters from './components/ReportFilters.vue';
 import { GROUP_BY_FILTER } from './constants';
@@ -24,7 +24,7 @@ export default {
     ReportHeader,
     ReportFilters,
     ReportContainer,
-    V4Button,
+    ReportDownload,
   },
   data() {
     return {
@@ -108,11 +108,11 @@ export default {
 
 <template>
   <ReportHeader :header-title="$t('REPORT.HEADER')">
-    <V4Button
+    <ReportDownload
       :label="$t('REPORT.DOWNLOAD_CONVERSATION_REPORTS')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadConversationReports"
+      report-type="conversation"
+      :get-filters="() => getRequestPayload()"
+      @csv="downloadConversationReports"
     />
   </ReportHeader>
   <div class="flex flex-col">

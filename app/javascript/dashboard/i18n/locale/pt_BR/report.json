@@ -1,5 +1,33 @@
 {
   "REPORT": {
+    "PDF": {
+      "STARTED": "A geração do PDF foi iniciada. Acompanhe o andamento abaixo do relatório.",
+      "RECENT": "Relatórios PDF recentes",
+      "RETENTION": "Os relatórios são privados e ficam disponíveis por 24 horas.",
+      "DOWNLOAD": "Baixar PDF",
+      "TYPES": {
+        "conversation": "Conversas",
+        "agent": "Agentes",
+        "label": "Etiquetas",
+        "inbox": "Caixas de entrada",
+        "team": "Times",
+        "csat": "CSAT",
+        "sla": "SLA"
+      },
+      "STATUS": {
+        "pending": "Na fila",
+        "processing": "Gerando",
+        "completed": "Pronto",
+        "failed": "Falhou"
+      },
+      "ERRORS": {
+        "invalid_filters": "Selecione um período e filtros válidos.",
+        "too_large": "Este relatório é muito grande. Reduza o período ou exporte em CSV.",
+        "service_unavailable": "O serviço de geração de PDF está indisponível. Tente novamente.",
+        "access_denied": "Você não tem mais acesso a este relatório.",
+        "generation_failed": "Não foi possível gerar ou baixar este PDF. Tente novamente."
+      }
+    },
     "HEADER": "Conversas",
     "LOADING_CHART": "Carregando dados do gráfico...",
     "NO_ENOUGH_DATA": "Não existem dados suficientes para gerar o relatório. Tente novamente mais tarde.",

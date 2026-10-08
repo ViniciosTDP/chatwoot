@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_13_184351) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_08_120000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1288,6 +1288,23 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_13_184351) do
     t.index ["related_category_id", "category_id"], name: "index_related_categories_on_related_category_id_and_category_id", unique: true
   end
 
+  create_table "report_exports", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "user_id", null: false
+    t.string "report_type", null: false
+    t.jsonb "filters", default: {}, null: false
+    t.string "status", default: "pending", null: false
+    t.string "error_code"
+    t.datetime "processed_at"
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "user_id", "created_at"], name: "index_report_exports_on_account_id_and_user_id_and_created_at"
+    t.index ["account_id"], name: "index_report_exports_on_account_id"
+    t.index ["expires_at"], name: "index_report_exports_on_expires_at"
+    t.index ["user_id"], name: "index_report_exports_on_user_id"
+  end
+
   create_table "reporting_events", force: :cascade do |t|
     t.string "name"
     t.float "value"
@@ -1497,6 +1514,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_13_184351) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "inboxes", "portals"
+  add_foreign_key "report_exports", "accounts"
+  add_foreign_key "report_exports", "users"
   add_foreign_key "user_sessions", "users"
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").

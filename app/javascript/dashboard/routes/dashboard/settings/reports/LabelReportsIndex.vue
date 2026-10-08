@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import ReportHeader from './components/ReportHeader.vue';
 import SummaryReports from './components/SummaryReports.vue';
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import ReportDownload from './components/ReportDownload.vue';
 
 const summarReportsRef = ref(null);
 
@@ -16,11 +16,11 @@ const onDownloadClick = () => {
     :header-title="$t('LABEL_REPORTS.HEADER')"
     :header-description="$t('LABEL_REPORTS.DESCRIPTION')"
   >
-    <V4Button
+    <ReportDownload
       :label="$t('LABEL_REPORTS.DOWNLOAD_LABEL_REPORTS')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="onDownloadClick"
+      report-type="label"
+      :get-filters="() => summarReportsRef.getExportFilters()"
+      @csv="onDownloadClick"
     />
   </ReportHeader>
 

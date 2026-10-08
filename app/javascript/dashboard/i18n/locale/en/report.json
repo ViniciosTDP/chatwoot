@@ -144,6 +144,34 @@
     "PAGINATION": {
       "RESULTS": "Showing {start} to {end} of {total} results",
       "PER_PAGE_TEMPLATE": "{size} / page"
+    },
+    "PDF": {
+      "STARTED": "PDF generation started. Follow its progress below the report.",
+      "RECENT": "Recent PDF reports",
+      "RETENTION": "Reports are private and available for 24 hours.",
+      "DOWNLOAD": "Download PDF",
+      "TYPES": {
+        "conversation": "Conversations",
+        "agent": "Agents",
+        "label": "Labels",
+        "inbox": "Inboxes",
+        "team": "Teams",
+        "csat": "CSAT",
+        "sla": "SLA"
+      },
+      "STATUS": {
+        "pending": "Queued",
+        "processing": "Generating",
+        "completed": "Ready",
+        "failed": "Failed"
+      },
+      "ERRORS": {
+        "invalid_filters": "Select a valid period and filters.",
+        "too_large": "This report is too large. Reduce the period or export CSV.",
+        "service_unavailable": "The PDF service is unavailable. Please try again.",
+        "access_denied": "You no longer have access to this report.",
+        "generation_failed": "Could not generate or download this PDF. Please try again."
+      }
     }
   },
   "AGENT_REPORTS": {

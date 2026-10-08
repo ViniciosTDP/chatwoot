@@ -1,4 +1,56 @@
 services:
+  pdf:
+    build:
+      context: .
+      dockerfile: docker/pdf/Dockerfile
+    image: chatwoot-report-pdf:local
+    environment:
+      PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:-local-pdf-token-change-me-0000000000}
+    init: true
+    restart: unless-stopped
+    cap_add: [SYS_ADMIN]
+    read_only: true
+    tmpfs: ['/tmp:size=256m,uid=1000,gid=1000']
+    shm_size: 128m
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 1.0
+    networks: [pdf_internal]
+    healthcheck:
+      test: ['CMD', 'node', '-e', 'fetch("http://127.0.0.1:3005/health").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))']
+      interval: 30s
+      timeout: 20s
+      start_period: 30s
+      retries: 3
+
+  report-worker:
+    build:
+      context: .
+      dockerfile: docker/dockerfiles/dev-local.Dockerfile
+    image: chatwoot-dev-local
+    env_file: .env.docker
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379
+      PDF_SERVICE_URL: http://pdf:3005
+      PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:-local-pdf-token-change-me-0000000000}
+    entrypoint: ['/bin/sh', '-c']
+    command: ['until bundle check >/dev/null 2>&1; do sleep 2; done; exec bundle exec sidekiq -q report_exports -c 1']
+    volumes:
+      - .:/app
+      - bundle_cache:/bundle
+      - node_modules:/app/node_modules
+    depends_on:
+      app:
+        condition: service_started
+      pdf:
+        condition: service_healthy
+    networks: [default, pdf_internal]
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 0.5
+
   postgres:
     image: pgvector/pgvector:pg16
     ports:
@@ -111,3 +163,7 @@ volumes:
   evolution_instances:
   bundle_cache:
   node_modules:
+
+networks:
+  pdf_internal:
+    internal: true

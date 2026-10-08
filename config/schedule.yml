@@ -4,6 +4,11 @@
 
 # executed daily at 0000 UTC
 # schedules daily deferred jobs at stable times for each installation
+cleanup_report_exports_job:
+  cron: '*/10 * * * *'
+  class: 'Reports::CleanupExportsJob'
+  queue: housekeeping
+
 internal_check_new_versions_job:
   cron: '0 0 * * *'
   class: 'Internal::TriggerDailyScheduledItemsJob'

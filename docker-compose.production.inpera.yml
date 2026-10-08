@@ -1,13 +1,58 @@
-# Chatwoot Inpera — production stack tuned for ~1 GB RAM VPS (test/homolog).
+# Chatwoot Inpera — production stack on HostGator (4 GB RAM / 2 vCPUs).
 # Build the image OFF the VPS, then: gunzip -c chatwoot-inpera-prod.tar.gz | docker load
 # Usage on VPS:
-#   docker-compose -f docker-compose.production.inpera.yml up -d
-#
-# Compose file format 2.4: mem_limit works without Swarm (docker-compose 1.25+).
-
-version: '2.4'
+#   docker compose -f docker-compose.production.inpera.yml up -d
+# Docker Compose v2 is required; resource limits work without Swarm.
 
 services:
+  pdf:
+    image: chatwoot-report-pdf:prod
+    environment:
+      PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:?Configure PDF_SERVICE_TOKEN in .env}
+    init: true
+    restart: always
+    cap_add: [SYS_ADMIN]
+    read_only: true
+    tmpfs: ['/tmp:size=256m,uid=1000,gid=1000']
+    shm_size: 128m
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 1.0
+    networks: [pdf_internal]
+    healthcheck:
+      test: ['CMD', 'node', '-e', 'fetch("http://127.0.0.1:3005/health").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))']
+      interval: 30s
+      timeout: 20s
+      start_period: 30s
+      retries: 3
+
+  report-worker:
+    image: chatwoot-inpera:prod
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      RAILS_ENV: production
+      INSTALLATION_ENV: docker
+      PDF_SERVICE_URL: http://pdf:3005
+      PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:?Configure PDF_SERVICE_TOKEN in .env}
+      RAILS_MAX_THREADS: 1
+      SIDEKIQ_CONCURRENCY: 1
+    command: ['bundle', 'exec', 'sidekiq', '-q', 'report_exports', '-c', '1']
+    volumes:
+      - storage_data:/app/storage
+    depends_on:
+      pdf:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks: [default, pdf_internal]
+    restart: always
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 0.5
+
   rails:
     image: chatwoot-inpera:prod
     env_file: .env
@@ -131,3 +176,7 @@ volumes:
   postgres_data:
   redis_data:
   evolution_instances:
+
+networks:
+  pdf_internal:
+    internal: true

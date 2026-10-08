@@ -1,5 +1,5 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import ReportDownload from './ReportDownload.vue';
 import { useAlert } from 'dashboard/composables';
 import ReportFilters from './ReportFilters.vue';
 import ReportContainer from '../ReportContainer.vue';
@@ -10,7 +10,7 @@ import ReportHeader from './ReportHeader.vue';
 export default {
   components: {
     ReportHeader,
-    V4Button,
+    ReportDownload,
     ReportFilters,
     ReportContainer,
   },
@@ -166,11 +166,19 @@ export default {
 
 <template>
   <ReportHeader :header-title="reportTitle" :has-back-button="hasBackButton">
-    <V4Button
+    <ReportDownload
       :label="downloadButtonLabel"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadReports"
+      :report-type="type"
+      :get-filters="
+        () => ({
+          from,
+          to,
+          businessHours,
+          groupBy: groupBy.period,
+          id: selectedFilterId,
+        })
+      "
+      @csv="downloadReports"
     />
   </ReportHeader>
 
