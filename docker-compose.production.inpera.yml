@@ -99,8 +99,8 @@ services:
       - postgres
       - redis
     restart: always
-    mem_limit: 640m
-    memswap_limit: 896m
+    mem_limit: 1024m
+    memswap_limit: 1280m
 
   postgres:
     image: pgvector/pgvector:pg16

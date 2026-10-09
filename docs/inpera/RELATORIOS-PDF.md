@@ -46,7 +46,7 @@ Nenhum deploy de produção é executado automaticamente pela implementação.
 
 ## Estabilidade da VPS — 09/10/2026
 
-Na VPS de 4 GB/2 vCPUs, Rails e Sidekiq usam 640 MB de RAM/896 MB incluindo swap; PostgreSQL usa 384/512 MB e Redis 256/384 MB. PDF e report-worker continuam em 768 MB e 512 MB. Os limites são tetos, não reservas; mantenha pelo menos 512 MB disponíveis no host e suspenda o report-worker se essa margem ficar menor por um minuto.
+Na VPS de 4 GB/2 vCPUs, Rails usa 640 MB de RAM/896 MB incluindo swap e Sidekiq usa 1024/1280 MB; PostgreSQL usa 384/512 MB e Redis 256/384 MB. A observação do atendimento real mostrou que 640 MB ainda causavam OOM no Sidekiq, então seu limite foi ajustado. PDF e report-worker continuam em 768 MB e 512 MB. Os limites são tetos, não reservas; mantenha pelo menos 512 MB disponíveis no host e suspenda o report-worker se essa margem ficar menor por um minuto.
 
 Use `WEB_CONCURRENCY=0`, `RAILS_MAX_THREADS=2`, `SIDEKIQ_CONCURRENCY=2` e `DB_POOL_SIZE=5` no ambiente de produção. O worker PDF mantém concorrência 1 e pool 5, pois os jobs auxiliares do SidekiqAlive também usam conexões. `DB_POOL_SIZE` é opcional; quando ausente, o cálculo original do pool permanece. O Compose local também define pool 5 no worker PDF.
 
