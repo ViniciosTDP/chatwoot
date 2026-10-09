@@ -9,6 +9,10 @@ class Reports::ExportPdfJob < ApplicationJob
     Reports::PdfFilters.new(export).validate!
     export.update!(status: :processing, error_code: nil, processed_at: Time.current)
     I18n.with_locale(:pt_BR) { generate(export) }
+  rescue ActiveRecord::ConnectionTimeoutError, ActiveRecord::ConnectionNotEstablished, RedisClient::Error, Redis::BaseError
+    # Sidekiq retries infrastructure failures; a failed initial lookup must not
+    # silently leave the export pending with no job left in the queue.
+    raise
   rescue CustomExceptions::ReportPdf => e
     export&.update!(status: :failed, error_code: e.code)
   rescue StandardError => e

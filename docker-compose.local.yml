@@ -33,6 +33,7 @@ services:
       POSTGRES_HOST: postgres
       REDIS_URL: redis://redis:6379
       PDF_SERVICE_URL: http://pdf:3005
+      DB_POOL_SIZE: 5
       PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:-local-pdf-token-change-me-0000000000}
     entrypoint: ['/bin/sh', '-c']
     command: ['until bundle check >/dev/null 2>&1; do sleep 2; done; exec bundle exec sidekiq -q report_exports -c 1']

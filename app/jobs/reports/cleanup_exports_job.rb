@@ -9,5 +9,8 @@ class Reports::CleanupExportsJob < ApplicationJob
     ReportExport.processing.where('processed_at < ?', 15.minutes.ago).find_each do |export|
       export.update!(status: 'failed', error_code: 'generation_failed')
     end
+    ReportExport.pending.where('created_at < ?', 30.minutes.ago).find_each do |export|
+      export.update!(status: 'failed', error_code: 'generation_failed')
+    end
   end
 end

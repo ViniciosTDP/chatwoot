@@ -44,6 +44,18 @@ REPO_DIR=/c/projetos-inpera/chatwoot/relatorios-pdf bash /c/projetos-inpera/chat
 `--only-up` pressupõe Compose atualizado, imagens carregadas, token configurado e migration executada.
 Nenhum deploy de produção é executado automaticamente pela implementação.
 
+## Estabilidade da VPS — 09/10/2026
+
+Na VPS de 4 GB/2 vCPUs, Rails e Sidekiq usam 640 MB de RAM/896 MB incluindo swap; PostgreSQL usa 384/512 MB e Redis 256/384 MB. PDF e report-worker continuam em 768 MB e 512 MB. Os limites são tetos, não reservas; mantenha pelo menos 512 MB disponíveis no host e suspenda o report-worker se essa margem ficar menor por um minuto.
+
+Use `WEB_CONCURRENCY=0`, `RAILS_MAX_THREADS=2`, `SIDEKIQ_CONCURRENCY=2` e `DB_POOL_SIZE=5` no ambiente de produção. O worker PDF mantém concorrência 1 e pool 5, pois os jobs auxiliares do SidekiqAlive também usam conexões. `DB_POOL_SIZE` é opcional; quando ausente, o cálculo original do pool permanece. O Compose local também define pool 5 no worker PDF.
+
+O Redis usa `maxmemory 128mb` e `noeviction`, preservando as filas em vez de descartar chaves; monitore memória, erros OOM e crescimento das filas. Falhas transitórias de conexão com banco/Redis são propagadas pelo job PDF às retentativas do Sidekiq. A limpeza marca como falhos pedidos pendentes há mais de 30 minutos ou em processamento há mais de 15 minutos, permitindo nova solicitação.
+
+Antes de reaplicar jobs abandonados, confira execução ativa, filas, retentativas e jobs mortos para evitar duplicação. Reprocesse apenas relatórios ainda disponíveis e permitidos. Não apague volumes nem filas para recuperar o serviço. Preserve configurações específicas do servidor, especialmente os limites do Evolution.
+
+Após deploy, monitore por 30 minutos os contadores de reinício, OOM do kernel, memória disponível e `evicted_keys` do Redis. Em caso de pressão de memória, pause primeiro o report-worker; para rollback da aplicação, use a imagem anterior preservando os limites corrigidos e `noeviction`.
+
 ## Limites e segurança
 
 - Uma geração por vez; limite de 5.000 linhas, HTML de 8 MB e renderização de 60 segundos. Relatórios acima do limite falham com orientação para reduzir o período ou usar CSV, sem truncar dados.

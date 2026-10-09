@@ -37,6 +37,8 @@ services:
       PDF_SERVICE_TOKEN: ${PDF_SERVICE_TOKEN:?Configure PDF_SERVICE_TOKEN in .env}
       RAILS_MAX_THREADS: 1
       SIDEKIQ_CONCURRENCY: 1
+      # One PDF job plus SidekiqAlive's auxiliary threads share this pool.
+      DB_POOL_SIZE: 5
     command: ['bundle', 'exec', 'sidekiq', '-q', 'report_exports', '-c', '1']
     volumes:
       - storage_data:/app/storage
@@ -63,6 +65,7 @@ services:
       - WEB_CONCURRENCY=${WEB_CONCURRENCY:-0}
       - RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
       - SIDEKIQ_CONCURRENCY=${SIDEKIQ_CONCURRENCY:-2}
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-5}
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
     volumes:
@@ -75,8 +78,8 @@ services:
     ports:
       - '3000:3000'
     restart: always
-    mem_limit: 320m
-    memswap_limit: 640m
+    mem_limit: 640m
+    memswap_limit: 896m
 
   sidekiq:
     image: chatwoot-inpera:prod
@@ -88,6 +91,7 @@ services:
       - WEB_CONCURRENCY=${WEB_CONCURRENCY:-0}
       - RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
       - SIDEKIQ_CONCURRENCY=${SIDEKIQ_CONCURRENCY:-2}
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-5}
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
     volumes:
       - storage_data:/app/storage
@@ -95,8 +99,8 @@ services:
       - postgres
       - redis
     restart: always
-    mem_limit: 320m
-    memswap_limit: 640m
+    mem_limit: 640m
+    memswap_limit: 896m
 
   postgres:
     image: pgvector/pgvector:pg16
@@ -122,8 +126,8 @@ services:
       - effective_cache_size=128MB
       - -c
       - max_connections=50
-    mem_limit: 192m
-    memswap_limit: 384m
+    mem_limit: 384m
+    memswap_limit: 512m
 
   redis:
     image: redis:alpine
@@ -131,14 +135,14 @@ services:
     command:
       - sh
       - -c
-      - redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 48mb --maxmemory-policy allkeys-lru
+      - redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 128mb --maxmemory-policy noeviction
     env_file: .env
     volumes:
       - redis_data:/data
     ports:
       - '127.0.0.1:6379:6379'
-    mem_limit: 64m
-    memswap_limit: 128m
+    mem_limit: 256m
+    memswap_limit: 384m
 
   evolution:
     image: evoapicloud/evolution-api:v2.3.7
@@ -168,8 +172,9 @@ services:
       - WPP_LID_MODE=false
     volumes:
       - evolution_instances:/evolution/instances
-    mem_limit: 192m
-    memswap_limit: 384m
+    # Preserve the limits already used by Evolution on the production host.
+    mem_limit: 640m
+    memswap_limit: 896m
 
 volumes:
   storage_data:
