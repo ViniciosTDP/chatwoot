@@ -56,6 +56,14 @@ Antes de reaplicar jobs abandonados, confira execução ativa, filas, retentativ
 
 Após deploy, monitore por 30 minutos os contadores de reinício, OOM do kernel, memória disponível e `evicted_keys` do Redis. Em caso de pressão de memória, pause primeiro o report-worker; para rollback da aplicação, use a imagem anterior preservando os limites corrigidos e `noeviction`.
 
+### Validação da correção na VPS
+
+Em 09/10/2026, a troca de configuração interrompeu o serviço por aproximadamente 26 segundos. Os relatórios pendentes de Conversas e Agentes foram recuperados sem duplicar jobs e concluídos em 1,41 s e 0,18 s. O ajuste inicial de 640 MB ainda causou um OOM no Sidekiq; após aumentar para 1024 MB, foram observados 30 minutos sem novos OOM, reinícios ou erros de conexão com banco/Redis. `evicted_keys` permaneceu zero; a menor amostra de memória disponível foi 965 MB, acima da margem de 512 MB.
+
+Localmente, passaram geração real dos dois PDFs, propagação dos erros transitórios para retentativa, limpeza de pedidos abandonados sem alterar pedidos recentes, RuboCop dos jobs, validação dos Compose e sintaxe Bash. As dependências locais temporárias foram encerradas preservando os volumes.
+
+A observação também encontrou jobs falhos por validação de identificadores do WhatsApp e erros de IMAP; essas integrações exigem investigação própria. As filas normais estavam vazias na checagem. A confirmação do envio de mensagens pelo usuário continua necessária; não foram enviados testes a contatos de produção.
+
 ## Limites e segurança
 
 - Uma geração por vez; limite de 5.000 linhas, HTML de 8 MB e renderização de 60 segundos. Relatórios acima do limite falham com orientação para reduzir o período ou usar CSV, sem truncar dados.
