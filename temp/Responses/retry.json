@@ -1,0 +1,38 @@
+{
+  "id": 89,
+  "content": null,
+  "inbox_id": 57,
+  "conversation_id": 7,
+  "message_type": 1,
+  "content_type": "text",
+  "status": "sent",
+  "content_attributes": {},
+  "created_at": 1784833067,
+  "private": false,
+  "source_id": null,
+  "sender": {
+    "id": 1,
+    "name": "John",
+    "available_name": "John",
+    "avatar_url": "",
+    "type": "user",
+    "availability_status": "online",
+    "thumbnail": ""
+  },
+  "attachments": [
+    {
+      "id": 21,
+      "message_id": 89,
+      "file_type": "audio",
+      "account_id": 1,
+      "extension": "mp3",
+      "content_type": "audio/mpeg",
+      "data_url": "http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--691b7a26f6b0c44edcc043f0fed8a129aaf514a4/9597b0fa4120.mp3?disposition=inline",
+      "thumb_url": "",
+      "file_size": 43776,
+      "width": null,
+      "height": null,
+      "transcribed_text": ""
+    }
+  ]
+}

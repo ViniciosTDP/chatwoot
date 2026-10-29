@@ -6,13 +6,12 @@ SLA exige Enterprise e administrador; as demais exportações usam as permissõe
 
 ## Ambiente local
 
-Execute os comandos no checkout que contém esta funcionalidade (worktree `relatorios-pdf` durante o desenvolvimento).
+Execute os comandos no checkout único `C:\projetos-inpera\chatwoot\chatwoot`.
 Utilize seu `.env.docker` existente; o Compose fornece um token exclusivamente de desenvolvimento.
-A worktree recebeu uma cópia do `.env.docker` do checkout original ao terminar os testes. O comando abaixo permite atualizar essa cópia caso sua configuração local mude.
+Os relatórios PDF/CSV e a configuração local foram preservados na consolidação dos worktrees. Não copie configurações de diretórios antigos sobre o checkout principal.
 
 ```powershell
-Set-Location C:\projetos-inpera\chatwoot\relatorios-pdf
-Copy-Item ..\chatwoot\.env.docker .env.docker
+Set-Location C:\projetos-inpera\chatwoot\chatwoot
 docker compose -p chatwoot -f docker-compose.local.yml up -d --build
 docker compose -p chatwoot -f docker-compose.local.yml logs -f pdf report-worker
 ```
@@ -34,10 +33,10 @@ PDF_SERVICE_URL=http://pdf:3005
 
 Gere o token com `openssl rand -hex 32`. Não versionar credenciais.
 O script externo `../temp/Deploy_Prod.sh` foi adaptado para construir/empacotar as duas imagens, enviar o Compose, executar migrations e iniciar PDF e report-worker.
-Enquanto a alteração estiver em worktree, no Git Bash:
+No Git Bash, o script usa o checkout único por padrão:
 
 ```bash
-REPO_DIR=/c/projetos-inpera/chatwoot/relatorios-pdf bash /c/projetos-inpera/chatwoot/temp/Deploy_Prod.sh
+bash /c/projetos-inpera/chatwoot/temp/Deploy_Prod.sh
 ```
 
 `--skip-build` exige ambas as imagens já construídas; `--skip-pack` exige um pacote contendo ambas.

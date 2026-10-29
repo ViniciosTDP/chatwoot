@@ -60,12 +60,15 @@
 - Prefer `with_modified_env` (from spec helpers) over stubbing `ENV` directly in specs
 - Specs in parallel/reloading environments: prefer comparing `error.class.name` over constant class equality when asserting raised errors
 
-## Codex Worktree Workflow
+## INPERA Git Workflow — single checkout
 
-- Use a separate git worktree + branch per task to keep changes isolated.
-- Keep Codex-specific local setup under `.codex/` and use `Procfile.worktree` for worktree process orchestration.
-- The setup workflow in `.codex/environments/environment.toml` should dynamically generate per-worktree DB/port values (Rails, Vite, Redis DB index) to avoid collisions.
-- Start each worktree with its own Overmind socket/title so multiple instances can run at the same time.
+- The only active checkout is `C:/projetos-inpera/chatwoot/chatwoot`. Use branches in this directory for versioning.
+- Do not create additional worktrees, clones, or source copies for a task unless the user explicitly requests an additional checkout. This INPERA policy replaces the upstream per-task worktree workflow and must survive upstream updates.
+- Before editing, check the repository root, current branch, and working tree status. Keep an existing work branch; when on a protected branch, create or switch to a work branch before implementation.
+- `inpera_chat`, `develop`, `development`, `main`, and `master` are protected. Integrate work into `inpera_chat` only when explicitly authorized; commits, pushes, and production deploys require their own authorization.
+- Preserve uncommitted changes, untracked files, ignored local configuration, and the PDF/CSV report functionality. Never reset, automatically stash, or discard another task's changes.
+- A branch does not isolate agents sharing this directory. Coordinate concurrent work before editing overlapping files or switching branches; do not solve contention by creating another checkout automatically.
+- Keep local agent setup under `.codex/` consistent with this policy. Per-worktree processes, ports, and databases are not the default.
 
 ## Commit Messages
 
@@ -84,6 +87,7 @@
 
 ## Project-Specific
 
+- **Stack / agent orientation**: see `docs/inpera/STACK.md` (fork INPERA Chat: runtime versions, Evolution API WhatsApp provider, Docker/ports, Graphify and Caveman usage)
 - **Translations**:
   - For product and source-string changes, only update `en.yml` and `en.json`; other languages are handled through Crowdin and the community
   - Crowdin-generated translation sync PRs may update non-English locale files; do not flag those changes solely for modifying translated locale files

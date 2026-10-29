@@ -1,0 +1,3 @@
+docker exec chatwoot-postgres-1 sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT status, count(*) FROM report_exports GROUP BY status; SELECT id, report_type, status, error_code, created_at, updated_at FROM report_exports ORDER BY id DESC LIMIT 6;"'
+docker exec chatwoot-redis-1 sh -c 'export REDISCLI_AUTH="$REDIS_PASSWORD"; for queue in critical high medium default low report_exports; do printf "%s=" "$queue"; redis-cli LLEN "queue:$queue"; done; redis-cli INFO stats | grep -E "evicted_keys|rejected_connections"; redis-cli INFO memory | grep -E "used_memory_human|maxmemory_policy"'
+docker exec chatwoot-report-worker-1 sh -c 'ps -ef | head -n 8' 2>/dev/null

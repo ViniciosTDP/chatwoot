@@ -1,5 +1,8 @@
 # Chatwoot DEV local — porta 3025
 
+Para escolher o arquivo Compose e configurar um checkout novo, consulte o
+[guia Docker da Inpera](DOCKER.md).
+
 Guia para rodar o Chatwoot no ambiente de desenvolvimento local na porta **3025**, liberando a **3000** para o frontend do Retaguarda TDP (`tdpcloud-frontend-react`).
 
 > Produção (`https://chat.inpera.com.br`) **não é afetada** por nada neste documento.

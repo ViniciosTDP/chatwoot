@@ -1,0 +1,115 @@
+ubuntu@ubuntu:~/chatwoot$ docker-compose -f docker-compose.production.inpera.yml exec -T rails \
+>   bundle exec rails runner "ActionMailer::Base.mail(from: ENV['MAILER_SENDER_EMAIL'], to: 'seu@email.com', subject: 'teste', body: 'ok').deliver_now; puts 'OK'"
+/gems/ruby/3.4.0/gems/net-smtp-0.3.4/lib/net/smtp.rb:1076:in 'Net::SMTP#check_response': 501 <"INPERA Gestão <ricardo@tdp.com.br>">: sender address must contain a domain (Net::SMTPSyntaxError)
+        from /gems/ruby/3.4.0/gems/net-smtp-0.3.4/lib/net/smtp.rb:1044:in 'Net::SMTP#getok'
+        from /gems/ruby/3.4.0/gems/net-smtp-0.3.4/lib/net/smtp.rb:945:in 'Net::SMTP#mailfrom'
+        from /gems/ruby/3.4.0/gems/net-smtp-0.3.4/lib/net/smtp.rb:767:in 'Net::SMTP#send_message'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/network/delivery_methods/smtp_connection.rb:53:in 'Mail::SMTPConnection#deliver!'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/network/delivery_methods/smtp.rb:101:in 'block in Mail::SMTP#deliver!'
+        from /gems/ruby/3.4.0/gems/net-smtp-0.3.4/lib/net/smtp.rb:612:in 'Net::SMTP#start'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/network/delivery_methods/smtp.rb:109:in 'Mail::SMTP#start_smtp_session'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/network/delivery_methods/smtp.rb:100:in 'Mail::SMTP#deliver!'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/message.rb:2145:in 'Mail::Message#do_delivery'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/message.rb:253:in 'block in Mail::Message#deliver'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/base.rb:600:in 'block in ActionMailer::Base.deliver_mail'
+        from /gems/ruby/3.4.0/gems/activesupport-7.1.5.2/lib/active_support/notifications.rb:208:in 'ActiveSupport::Notifications.instrument'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/base.rb:598:in 'ActionMailer::Base.deliver_mail'
+        from /gems/ruby/3.4.0/gems/mail-2.8.1/lib/mail/message.rb:253:in 'Mail::Message#deliver'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/message_delivery.rb:126:in 'block (2 levels) in ActionMailer::MessageDelivery#deliver_now'
+        from /gems/ruby/3.4.0/gems/activesupport-7.1.5.2/lib/active_support/callbacks.rb:101:in 'ActiveSupport::Callbacks#run_callbacks'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/message_delivery.rb:125:in 'block in ActionMailer::MessageDelivery#deliver_now'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/rescuable.rb:21:in 'ActionMailer::Rescuable#handle_exceptions'
+        from /gems/ruby/3.4.0/gems/actionmailer-7.1.5.2/lib/action_mailer/message_delivery.rb:124:in 'ActionMailer::MessageDelivery#deliver_now'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/commands/runner/runner_command.rb:46:in '<main>'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/commands/runner/runner_command.rb:46:in 'Kernel#eval'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/commands/runner/runner_command.rb:46:in 'block in Rails::Command::RunnerCommand#perform'
+        from /gems/ruby/3.4.0/gems/activesupport-7.1.5.2/lib/active_support/execution_wrapper.rb:92:in 'ActiveSupport::ExecutionWrapper.wrap'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/commands/runner/runner_command.rb:45:in 'Rails::Command::RunnerCommand#perform'
+        from /gems/ruby/3.4.0/gems/thor-1.4.0/lib/thor/command.rb:28:in 'Thor::Command#run'
+        from /gems/ruby/3.4.0/gems/thor-1.4.0/lib/thor/invocation.rb:127:in 'Thor::Invocation#invoke_command'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/command/base.rb:178:in 'Rails::Command::Base#invoke_command'
+        from /gems/ruby/3.4.0/gems/thor-1.4.0/lib/thor.rb:538:in 'Thor.dispatch'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/command/base.rb:73:in 'Rails::Command::Base.perform'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/command.rb:71:in 'block in Rails::Command.invoke'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/command.rb:149:in 'Rails::Command.with_argv'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/command.rb:69:in 'Rails::Command.invoke'
+        from /gems/ruby/3.4.0/gems/railties-7.1.5.2/lib/rails/commands.rb:18:in '<main>'
+        from /usr/local/lib/ruby/3.4.0/bundled_gems.rb:82:in 'Kernel.require'
+        from /usr/local/lib/ruby/3.4.0/bundled_gems.rb:82:in 'block (2 levels) in Kernel#replace_require'
+        from /gems/ruby/3.4.0/gems/bootsnap-1.16.0/lib/bootsnap/load_path_cache/core_ext/kernel_require.rb:32:in 'Kernel#require'
+        from bin/rails:4:in '<main>'
+W, [2026-08-05T19:04:52.157167 #120]  WARN -- :
+!!! RubyLLM's legacy acts_as API is deprecated and will be removed in RubyLLM 2.0.0. Please consult the migration guide at https://rubyllm.com/upgrading-to-1-7/
+
+I, [2026-08-05T19:04:57.199015 #120]  INFO -- : [rake ip_lookup:setup] IP_LOOKUP_API_KEY empty. Skipping geoip database setup
+ubuntu@ubuntu:~/chatwoot$
+
+ubuntu@ubuntu:~/chatwoot$ docker-compose -f docker-compose.production.inpera.yml exec -T rails \
+>   printenv | grep -E '^SMTP_|^MAILER_' | sed 's/PASSWORD=.*/PASSWORD=***/'
+MAILER_SENDER_EMAIL="INPERA Gestão <ricardo@tdp.com.br>"
+SMTP_ADDRESS=mail.tdp.com.br
+SMTP_PORT=465
+SMTP_DOMAIN=tdp.com.br
+SMTP_USERNAME=ricardo@tdp.com.br
+SMTP_PASSWORD=***
+SMTP_AUTHENTICATION=plain
+SMTP_ENABLE_STARTTLS_AUTO=true
+SMTP_SSL=true
+SMTP_OPENSSL_VERIFY_MODE=peer
+
+ubuntu@ubuntu:~/chatwoot$ docker-compose -f docker-compose.production.inpera.yml logs --tail=100 sidekiq | grep -iE 'smtp|mail|delivery|Net::|OpenSSL|465'
+sidekiq_1    | I, [2026-08-05T19:01:52.774426 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [570d0469-c349-41eb-bdf8-6514af84a037] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: 570d0469-c349-41eb-bdf8-6514af84a037) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:01:52.758698512Z
+sidekiq_1    | I, [2026-08-05T19:01:52.775116 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: 570d0469-c349-41eb-bdf8-6514af84a037) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:01:53.519266 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [570d0469-c349-41eb-bdf8-6514af84a037] Enqueued Inboxes::FetchImapEmailsJob (Job ID: 83adce38-143f-46d2-bf21-79c5c1559173) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f86ac3d3710 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:01:53.531063 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [570d0469-c349-41eb-bdf8-6514af84a037] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: 570d0469-c349-41eb-bdf8-6514af84a037) from Sidekiq(scheduled_jobs) in 757.43ms
+sidekiq_1    | I, [2026-08-05T19:01:53.537208 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [83adce38-143f-46d2-bf21-79c5c1559173] Performing Inboxes::FetchImapEmailsJob (Job ID: 83adce38-143f-46d2-bf21-79c5c1559173) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:01:53.517919230Z with arguments: #<GlobalID:0x00007f86acbacfb8 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:01:53.554895 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [83adce38-143f-46d2-bf21-79c5c1559173] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:01:54.139858 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [83adce38-143f-46d2-bf21-79c5c1559173] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:01:54.141538 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [83adce38-143f-46d2-bf21-79c5c1559173] Performed Inboxes::FetchImapEmailsJob (Job ID: 83adce38-143f-46d2-bf21-79c5c1559173) from Sidekiq(scheduled_jobs) in 619.91ms
+sidekiq_1    | I, [2026-08-05T19:02:18.461861 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: d236885e-a666-4453-97f4-9fc7c6f82160) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:02:18.462608 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [d236885e-a666-4453-97f4-9fc7c6f82160] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: d236885e-a666-4453-97f4-9fc7c6f82160) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:02:18.461312596Z
+sidekiq_1    | I, [2026-08-05T19:02:18.504166 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [d236885e-a666-4453-97f4-9fc7c6f82160] Enqueued Inboxes::FetchImapEmailsJob (Job ID: ddaf7664-05b6-4abe-bde4-97bbdc1c4171) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f86987c2308 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:02:18.506832 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [d236885e-a666-4453-97f4-9fc7c6f82160] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: d236885e-a666-4453-97f4-9fc7c6f82160) from Sidekiq(scheduled_jobs) in 44.26ms
+sidekiq_1    | I, [2026-08-05T19:02:18.510232 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [ddaf7664-05b6-4abe-bde4-97bbdc1c4171] Performing Inboxes::FetchImapEmailsJob (Job ID: ddaf7664-05b6-4abe-bde4-97bbdc1c4171) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:02:18.503289296Z with arguments: #<GlobalID:0x00007f86abc2e0a0 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:02:18.514500 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [ddaf7664-05b6-4abe-bde4-97bbdc1c4171] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:02:18.936361 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [ddaf7664-05b6-4abe-bde4-97bbdc1c4171] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:02:18.937159 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [ddaf7664-05b6-4abe-bde4-97bbdc1c4171] Performed Inboxes::FetchImapEmailsJob (Job ID: ddaf7664-05b6-4abe-bde4-97bbdc1c4171) from Sidekiq(scheduled_jobs) in 431.83ms
+sidekiq_1    | I, [2026-08-05T19:02:57.316422 #1]  INFO -- : [ActiveJob] [ActionMailer::MailDeliveryJob] [9f752830-b67d-4aae-b542-98b6a58ec2ff] Performing ActionMailer::MailDeliveryJob (Job ID: 9f752830-b67d-4aae-b542-98b6a58ec2ff) from Sidekiq(default) enqueued at 2026-08-05T19:02:57.017994883Z with arguments: "Devise::Mailer", "confirmation_instructions", "deliver_now", {params: {account: #<GlobalID:0x00007f86a995f448 @uri=#<URI::GID gid://chatwoot/Account/21>>}, args: [#<GlobalID:0x00007f86a995ede0 @uri=#<URI::GID gid://chatwoot/User/30>>, "19UKa6ZXUuxDB7KrMo6z", {client_config: "default", redirect_url: nil}]}
+sidekiq_1    | I, [2026-08-05T19:02:58.321434 #1]  INFO -- : [ActiveJob] [ActionMailer::MailDeliveryJob] [9f752830-b67d-4aae-b542-98b6a58ec2ff]   Rendered layout layouts/mailer/base.liquid (Duration: 681.5ms | Allocations: 19469)
+sidekiq_1    | W, [2026-08-05T19:03:00.567217 #1]  WARN -- : [ActiveJob] [ActionMailer::MailDeliveryJob] [9f752830-b67d-4aae-b542-98b6a58ec2ff] Failed to send Email
+sidekiq_1    | E, [2026-08-05T19:03:00.567503 #1] ERROR -- : [ActiveJob] [ActionMailer::MailDeliveryJob] [9f752830-b67d-4aae-b542-98b6a58ec2ff] Exception: Net::SMTPSyntaxError
+sidekiq_1    | I, [2026-08-05T19:03:00.567757 #1]  INFO -- : [ActiveJob] [ActionMailer::MailDeliveryJob] [9f752830-b67d-4aae-b542-98b6a58ec2ff] Performed ActionMailer::MailDeliveryJob (Job ID: 9f752830-b67d-4aae-b542-98b6a58ec2ff) from Sidekiq(default) in 3546.02ms
+sidekiq_1    | I, [2026-08-05T19:03:06.634584 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: 8bce8e89-a295-4ec7-8729-233ffafa4dc3) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:03:06.635838 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [8bce8e89-a295-4ec7-8729-233ffafa4dc3] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: 8bce8e89-a295-4ec7-8729-233ffafa4dc3) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:03:06.633794599Z
+sidekiq_1    | I, [2026-08-05T19:03:06.668305 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [8bce8e89-a295-4ec7-8729-233ffafa4dc3] Enqueued Inboxes::FetchImapEmailsJob (Job ID: 2188641e-b949-4b26-94cd-df8c53e2942d) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f869895ada0 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:03:06.669444 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [8bce8e89-a295-4ec7-8729-233ffafa4dc3] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: 8bce8e89-a295-4ec7-8729-233ffafa4dc3) from Sidekiq(scheduled_jobs) in 33.73ms
+sidekiq_1    | I, [2026-08-05T19:03:06.672015 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [2188641e-b949-4b26-94cd-df8c53e2942d] Performing Inboxes::FetchImapEmailsJob (Job ID: 2188641e-b949-4b26-94cd-df8c53e2942d) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:03:06.667237149Z with arguments: #<GlobalID:0x00007f8698955a08 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:03:06.675576 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [2188641e-b949-4b26-94cd-df8c53e2942d] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:03:07.092352 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [2188641e-b949-4b26-94cd-df8c53e2942d] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:03:07.093103 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [2188641e-b949-4b26-94cd-df8c53e2942d] Performed Inboxes::FetchImapEmailsJob (Job ID: 2188641e-b949-4b26-94cd-df8c53e2942d) from Sidekiq(scheduled_jobs) in 424.25ms
+sidekiq_1    | I, [2026-08-05T19:03:29.734225 #1]  INFO -- : [ActiveJob] [Avatar::AvatarFromGravatarJob] [1facf430-6c52-4624-830d-bd700d037126] Skipping Avatar::AvatarFromGravatarJob with [{"_aj_globalid" => "gid://chatwoot/User/30"}, "lucastestetdp@gmail.com"] because of ActiveJob::DeserializationError (Error while trying to deserialize arguments: Couldn't find User with 'id'="30")
+sidekiq_1    | I, [2026-08-05T19:04:14.639056 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: 9c8e3d6c-0205-41ac-92d3-edc627af0f27) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:04:14.641700 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [9c8e3d6c-0205-41ac-92d3-edc627af0f27] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: 9c8e3d6c-0205-41ac-92d3-edc627af0f27) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:04:14.638519767Z
+sidekiq_1    | I, [2026-08-05T19:04:14.694183 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [9c8e3d6c-0205-41ac-92d3-edc627af0f27] Enqueued Inboxes::FetchImapEmailsJob (Job ID: 8887c784-db83-4791-86d5-9bb50448b3c3) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f86ac96c3e8 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:04:14.696830 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [9c8e3d6c-0205-41ac-92d3-edc627af0f27] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: 9c8e3d6c-0205-41ac-92d3-edc627af0f27) from Sidekiq(scheduled_jobs) in 55.58ms
+sidekiq_1    | I, [2026-08-05T19:04:14.699967 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [8887c784-db83-4791-86d5-9bb50448b3c3] Performing Inboxes::FetchImapEmailsJob (Job ID: 8887c784-db83-4791-86d5-9bb50448b3c3) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:04:14.693667651Z with arguments: #<GlobalID:0x00007f86ac967d48 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:04:14.704865 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [8887c784-db83-4791-86d5-9bb50448b3c3] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:04:17.279625 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [8887c784-db83-4791-86d5-9bb50448b3c3] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:04:17.280398 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [8887c784-db83-4791-86d5-9bb50448b3c3] Performed Inboxes::FetchImapEmailsJob (Job ID: 8887c784-db83-4791-86d5-9bb50448b3c3) from Sidekiq(scheduled_jobs) in 2584.94ms
+sidekiq_1    | I, [2026-08-05T19:05:12.044038 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: 0117323f-2a42-4c2f-88f7-745e27305c3c) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:05:12.045834 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [0117323f-2a42-4c2f-88f7-745e27305c3c] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: 0117323f-2a42-4c2f-88f7-745e27305c3c) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:05:12.042821809Z
+sidekiq_1    | I, [2026-08-05T19:05:12.264465 #1]  INFO -- : [ActiveJob] [TriggerScheduledItemsJob] [7b7f0ce6-d44c-497c-a3ae-5def0cf96778] Enqueued Notification::ReopenSnoozedNotificationsJob (Job ID: 6fa48704-7743-43a1-b253-4c922d327eb7) to Sidekiq(low)
+sidekiq_1    | I, [2026-08-05T19:05:12.354295 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [0117323f-2a42-4c2f-88f7-745e27305c3c] Enqueued Inboxes::FetchImapEmailsJob (Job ID: 693be0ee-b8c8-4622-a240-17b6078e9594) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f869f221c30 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:05:12.354603 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [0117323f-2a42-4c2f-88f7-745e27305c3c] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: 0117323f-2a42-4c2f-88f7-745e27305c3c) from Sidekiq(scheduled_jobs) in 308.87ms
+sidekiq_1    | I, [2026-08-05T19:05:12.522722 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [693be0ee-b8c8-4622-a240-17b6078e9594] Performing Inboxes::FetchImapEmailsJob (Job ID: 693be0ee-b8c8-4622-a240-17b6078e9594) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:05:12.352900825Z with arguments: #<GlobalID:0x00007f86a8fb6e00 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:05:12.538925 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [693be0ee-b8c8-4622-a240-17b6078e9594] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:05:13.018015 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [693be0ee-b8c8-4622-a240-17b6078e9594] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:05:13.018687 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [693be0ee-b8c8-4622-a240-17b6078e9594] Performed Inboxes::FetchImapEmailsJob (Job ID: 693be0ee-b8c8-4622-a240-17b6078e9594) from Sidekiq(scheduled_jobs) in 523.74ms
+sidekiq_1    | I, [2026-08-05T19:06:02.762021 #1]  INFO -- : [ActiveJob] Enqueued Inboxes::FetchImapEmailInboxesJob (Job ID: 5d0738c8-3070-4569-9bed-3edc57aad7c6) to Sidekiq(scheduled_jobs)
+sidekiq_1    | I, [2026-08-05T19:06:02.764205 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [5d0738c8-3070-4569-9bed-3edc57aad7c6] Performing Inboxes::FetchImapEmailInboxesJob (Job ID: 5d0738c8-3070-4569-9bed-3edc57aad7c6) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:06:02.760901007Z
+sidekiq_1    | I, [2026-08-05T19:06:02.873966 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [5d0738c8-3070-4569-9bed-3edc57aad7c6] Enqueued Inboxes::FetchImapEmailsJob (Job ID: cb5f9438-5a92-4671-858b-d62354d23b2a) to Sidekiq(scheduled_jobs) with arguments: #<GlobalID:0x00007f86aa0d2630 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:06:02.876084 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailInboxesJob] [5d0738c8-3070-4569-9bed-3edc57aad7c6] Performed Inboxes::FetchImapEmailInboxesJob (Job ID: 5d0738c8-3070-4569-9bed-3edc57aad7c6) from Sidekiq(scheduled_jobs) in 111.93ms
+sidekiq_1    | I, [2026-08-05T19:06:02.878770 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [cb5f9438-5a92-4671-858b-d62354d23b2a] Performing Inboxes::FetchImapEmailsJob (Job ID: cb5f9438-5a92-4671-858b-d62354d23b2a) from Sidekiq(scheduled_jobs) enqueued at 2026-08-05T19:06:02.873016585Z with arguments: #<GlobalID:0x00007f86987ac3f0 @uri=#<URI::GID gid://chatwoot/Channel::Email/1>>
+sidekiq_1    | I, [2026-08-05T19:06:02.881242 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [cb5f9438-5a92-4671-858b-d62354d23b2a] [Inboxes::FetchImapEmailsJob] Acquired lock for: EMAIL_CHANNEL_LOCK::32 on attempt 1
+sidekiq_1    | E, [2026-08-05T19:06:03.296674 #1] ERROR -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [cb5f9438-5a92-4671-858b-d62354d23b2a] Error for email channel - 32 : bad response type "DOVECOT", expected OK or NO or BAD
+sidekiq_1    | I, [2026-08-05T19:06:03.297473 #1]  INFO -- : [ActiveJob] [Inboxes::FetchImapEmailsJob] [cb5f9438-5a92-4671-858b-d62354d23b2a] Performed Inboxes::FetchImapEmailsJob (Job ID: cb5f9438-5a92-4671-858b-d62354d23b2a) from Sidekiq(scheduled_jobs) in 422.57ms

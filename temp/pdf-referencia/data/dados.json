@@ -1,0 +1,1767 @@
+[
+  {
+    "resultado": {
+      "prestadora": {
+        "razaoSocial": "INPERA DELIVERY",
+        "logradouro": "Avenida José de Godoy Bueno",
+        "numero": "95",
+        "bairro": "Residencial Veneza",
+        "cidade": "Dois Córregos",
+        "uf": "SP"
+      },
+      "ordens": [
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2107",
+              "OS_DATA": "03/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza do filtro do Ar condicionado",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "07/08/2026",
+              "OS_PERIODOAGENDAMENTO": "14:23",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [
+              {
+                "OSV_VENCIMENTO": "10/08/2026",
+                "OSV_DOCUMENTO": "0250",
+                "OSV_VALOR": "R$ 300.00"
+              }
+            ],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 300.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2111",
+              "OS_DATA": "03/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "~ /",
+              "OS_DEFEITO": "limpenza do ar condicionado",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "07/08/2026",
+              "OS_PERIODOAGENDAMENTO": "16:37",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              },
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 56.19",
+                "Subtotal_Item": "R$ 56.19",
+                "PRO_DESCRICAO": "BELLA DUCHA 6800W 220V BRANCO LORENZETTI",
+                "atendimentos": [],
+                "tipo": "P",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 56.19",
+              "total": "R$ 56.19"
+            },
+            "vencimentos": [
+              {
+                "OSV_VENCIMENTO": "10/08/2026",
+                "OSV_DOCUMENTO": "0201040506",
+                "OSV_VALOR": "R$ 100.00"
+              }
+            ],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 100.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1286",
+            "CLI_RAZAO": "João Marcos Fornaciri ",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2117",
+              "OS_DATA": "10/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "ar da sala nao esta gelando",
+              "OS_DEFEITO": "Ar condicionado não gela",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "11/08/2026",
+              "OS_PERIODOAGENDAMENTO": "14:20",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "14/08/2026 15:03:00",
+                    "OSA_DATAHORAFINAL": "14/08/2026 16:00:00",
+                    "OSA_SERVICOEXECUTADO": null
+                  },
+                  {
+                    "OSA_DATAHORAINICIAL": "19/08/2026 14:29:00",
+                    "OSA_DATAHORAFINAL": null,
+                    "OSA_SERVICOEXECUTADO": null
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [
+              {
+                "OSV_VENCIMENTO": "20/08/2026",
+                "OSV_DOCUMENTO": "010203",
+                "OSV_VALOR": "R$ 100.00"
+              }
+            ],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 100.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2118",
+              "OS_DATA": "11/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza do ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "11/08/2026",
+              "OS_PERIODOAGENDAMENTO": "2026-08-11",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2120",
+              "OS_DATA": "12/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza de ar condionado ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "12/08/2026",
+              "OS_PERIODOAGENDAMENTO": "10:33",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [
+              {
+                "OSV_VENCIMENTO": "20/08/2026",
+                "OSV_DOCUMENTO": "010101",
+                "OSV_VALOR": "R$ 100.00"
+              }
+            ],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 100.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2121",
+              "OS_DATA": "13/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "limpeza do ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "17/08/2026",
+              "OS_PERIODOAGENDAMENTO": "2026-08-17",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "792",
+            "CLI_RAZAO": "CLIENTE TESTE",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": "tdp@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2124",
+              "OS_DATA": "17/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "17/08/2026",
+              "OS_PERIODOAGENDAMENTO": "14:17",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2129",
+              "OS_DATA": "20/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "Manutenção Preventiva",
+              "OS_DEFEITO": "Limpeza do Ar condicionado",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "20/08/2026",
+              "OS_PERIODOAGENDAMENTO": "08:44",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "20/08/2026 12:04:00",
+                    "OSA_DATAHORAFINAL": null,
+                    "OSA_SERVICOEXECUTADO": "Limpeza do ar condicionado "
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1020",
+            "CLI_RAZAO": "Bruno",
+            "CLI_TELEFONE": "U2FsdGVkX19eM/nejYNoWb9J8onK5OuNtgtPTjaNsoA=",
+            "CLI_EMAIL": "brunobonfante@netsystemsistemas.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2130",
+              "OS_DATA": "20/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "conserto ,",
+              "OS_DEFEITO": "solda ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "20/08/2026",
+              "OS_PERIODOAGENDAMENTO": "16:05",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "25/09/2026 18:37:00",
+                    "OSA_DATAHORAFINAL": "25/09/2026 18:37:00",
+                    "OSA_SERVICOEXECUTADO": null
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1020",
+            "CLI_RAZAO": "Bruno",
+            "CLI_TELEFONE": "U2FsdGVkX19eM/nejYNoWb9J8onK5OuNtgtPTjaNsoA=",
+            "CLI_EMAIL": "brunobonfante@netsystemsistemas.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2131",
+              "OS_DATA": "20/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "21/08/2026",
+              "OS_PERIODOAGENDAMENTO": "10:00",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "21/08/2026 13:00:00",
+                    "OSA_DATAHORAFINAL": "21/08/2026 13:00:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2132",
+              "OS_DATA": "21/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "21/08/2026",
+              "OS_PERIODOAGENDAMENTO": "14:08",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1292",
+            "CLI_RAZAO": "vinicios",
+            "CLI_TELEFONE": "U2FsdGVkX1/l5WStgX8pi175tWJZir2cazNQtgqRtgQ=",
+            "CLI_EMAIL": "vinicios@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2133",
+              "OS_DATA": "26/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "26/08/2026",
+              "OS_PERIODOAGENDAMENTO": "14:34",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1020",
+            "CLI_RAZAO": "Bruno",
+            "CLI_TELEFONE": "U2FsdGVkX19eM/nejYNoWb9J8onK5OuNtgtPTjaNsoA=",
+            "CLI_EMAIL": "brunobonfante@netsystemsistemas.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2134",
+              "OS_DATA": "26/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "28/08/2026",
+              "OS_PERIODOAGENDAMENTO": "08:30",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2135",
+              "OS_DATA": "27/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "limpeza no ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "31/08/2026",
+              "OS_PERIODOAGENDAMENTO": "08:28",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1240",
+            "CLI_RAZAO": "Lucas Duarte Augusto",
+            "CLI_TELEFONE": "U2FsdGVkX19EXHSR7rY555CR26E6UwEZdOQvRCilyDc=",
+            "CLI_EMAIL": "lucasduarte@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2137",
+              "OS_DATA": "27/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 80.00",
+              "OS_DATAAGENDAMENTO": "03/09/2026",
+              "OS_PERIODOAGENDAMENTO": "13:52",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 80.00",
+                "Subtotal_Item": "R$ 80.00",
+                "PRO_DESCRICAO": "CAMISETA BLOOK BLESSED VC E UNICA BCA G",
+                "atendimentos": [],
+                "tipo": "P",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 80.00",
+              "total": "R$ 80.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1240",
+            "CLI_RAZAO": "Lucas Duarte Augusto",
+            "CLI_TELEFONE": "U2FsdGVkX19EXHSR7rY555CR26E6UwEZdOQvRCilyDc=",
+            "CLI_EMAIL": "lucasduarte@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2138",
+              "OS_DATA": "27/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "01/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:10",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 5.00",
+                "Subtotal_Item": "R$ 5.00",
+                "PRO_DESCRICAO": "BOMBOM FREEGELYS",
+                "atendimentos": [],
+                "tipo": "P",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 5.00",
+              "total": "R$ 5.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2139",
+              "OS_DATA": "27/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza do ar condicionado ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "31/08/2026",
+              "OS_PERIODOAGENDAMENTO": "17:01",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2141",
+              "OS_DATA": "28/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza de Ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 300.00",
+              "OS_DATAAGENDAMENTO": "31/08/2026",
+              "OS_PERIODOAGENDAMENTO": "08:52",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2148",
+              "OS_DATA": "31/08/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza no ar condicionado",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "02/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:20",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2150",
+              "OS_DATA": "01/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza no ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "04/09/2026",
+              "OS_PERIODOAGENDAMENTO": "10:22",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "14/09/2026 17:59:00",
+                    "OSA_DATAHORAFINAL": "14/09/2026 18:10:00",
+                    "OSA_SERVICOEXECUTADO": "Foi feita a limpezza e lavagem do filtro do ar."
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1248",
+            "CLI_RAZAO": "TDP SISTEMAS DE INFORMAÇÃO",
+            "CLI_TELEFONE": "U2FsdGVkX18FhWhemq6ZTm3jK/FijjsioolLuxMCJ5A=",
+            "CLI_EMAIL": "tdp@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2152",
+              "OS_DATA": "03/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "Aplicar bactericida na evaporadora · TESTE NOVO · Sala de Desenvolvimento · Contrato 05198",
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "23/09/2026",
+              "OS_PERIODOAGENDAMENTO": "08:00",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "23/09/2026 11:00:00",
+                    "OSA_DATAHORAFINAL": "23/09/2026 11:00:00",
+                    "OSA_SERVICOEXECUTADO": "Aplicar bactericida na evaporadora · TESTE NOVO · Sala de Desenvolvimento · Contrato 05198"
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1248",
+            "CLI_RAZAO": "TDP SISTEMAS DE INFORMAÇÃO",
+            "CLI_TELEFONE": "U2FsdGVkX18FhWhemq6ZTm3jK/FijjsioolLuxMCJ5A=",
+            "CLI_EMAIL": "tdp@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2158",
+              "OS_DATA": "10/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "Aplicar bactericida na evaporadora · TESTE NOVO · Sala de Desenvolvimento · Contrato 05198",
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "23/09/2026",
+              "OS_PERIODOAGENDAMENTO": "08:00",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "21/09/2026 19:16:00",
+                    "OSA_DATAHORAFINAL": "21/09/2026 20:00:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2159",
+              "OS_DATA": "10/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "Verificar se todas as funções estão operando · Ar Condicionado João  · Sala de Teste do Inpera Serviços · Contrato 12345678",
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "14/09/2026",
+              "OS_PERIODOAGENDAMENTO": "08:00",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "14/09/2026 11:00:00",
+                    "OSA_DATAHORAFINAL": "14/09/2026 11:00:00",
+                    "OSA_SERVICOEXECUTADO": "Verificar se todas as funções estão operando · Ar Condicionado João  · Sala de Teste do Inpera Serviços · Contrato 12345678"
+                  },
+                  {
+                    "OSA_DATAHORAINICIAL": "14/09/2026 14:43:00",
+                    "OSA_DATAHORAFINAL": "14/09/2026 14:43:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2164",
+              "OS_DATA": "14/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza no Ar condicionado ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "16/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:50",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2166",
+              "OS_DATA": "15/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "13/09/2026",
+              "OS_PERIODOAGENDAMENTO": "16:43",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "13/09/2026 19:43:00",
+                    "OSA_DATAHORAFINAL": "13/09/2026 19:43:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1288",
+            "CLI_RAZAO": "cadu teste",
+            "CLI_TELEFONE": "U2FsdGVkX1/l/92N35cvxn+e4Dq54OMZKsecIsfmoV4=",
+            "CLI_EMAIL": "caduteste@tdp.com"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2168",
+              "OS_DATA": "15/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "15/09/2026",
+              "OS_PERIODOAGENDAMENTO": "17:49",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "Antonio"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "15/09/2026 20:49:00",
+                    "OSA_DATAHORAFINAL": "15/09/2026 20:49:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "Antonio"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1292",
+            "CLI_RAZAO": "vinicios",
+            "CLI_TELEFONE": "U2FsdGVkX1/l5WStgX8pi175tWJZir2cazNQtgqRtgQ=",
+            "CLI_EMAIL": "vinicios@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2169",
+              "OS_DATA": "16/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "16/09/2026",
+              "OS_PERIODOAGENDAMENTO": "08:34",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "16/09/2026 11:35:00",
+                    "OSA_DATAHORAFINAL": null,
+                    "OSA_SERVICOEXECUTADO": null
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2170",
+              "OS_DATA": "16/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "16/09/2026",
+              "OS_PERIODOAGENDAMENTO": "17:30",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 15.00",
+                "Subtotal_Item": "R$ 15.00",
+                "PRO_DESCRICAO": "BISCOITO GATINHO STEVEN UNIVERSO",
+                "atendimentos": [],
+                "tipo": "P",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 15.00",
+              "total": "R$ 15.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2171",
+              "OS_DATA": "17/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "17/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:37",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "17/09/2026 14:37:00",
+                    "OSA_DATAHORAFINAL": "17/09/2026 14:37:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": "SERVIÇOS PRESTADOS NA O.S."
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1020",
+            "CLI_RAZAO": "Bruno",
+            "CLI_TELEFONE": "U2FsdGVkX19eM/nejYNoWb9J8onK5OuNtgtPTjaNsoA=",
+            "CLI_EMAIL": "brunobonfante@netsystemsistemas.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2172",
+              "OS_DATA": "17/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "17/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:44",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2173",
+              "OS_DATA": "18/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "18/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:12",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2174",
+              "OS_DATA": "18/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "18/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:51",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2175",
+              "OS_DATA": "18/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "18/09/2026",
+              "OS_PERIODOAGENDAMENTO": "14:56",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 1.00",
+                "Subtotal_Item": "R$ 1.00",
+                "PRO_DESCRICAO": "0,300",
+                "atendimentos": [],
+                "tipo": "P",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 1.00",
+              "total": "R$ 1.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2176",
+              "OS_DATA": "25/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza no ar condionado ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "28/09/2026",
+              "OS_PERIODOAGENDAMENTO": "15:31",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2177",
+              "OS_DATA": "25/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": null,
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "25/09/2026",
+              "OS_PERIODOAGENDAMENTO": "15:36",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "30/09/2026 15:02:00",
+                    "OSA_DATAHORAFINAL": "30/09/2026 15:03:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  },
+                  {
+                    "OSA_DATAHORAINICIAL": "30/09/2026 15:04:00",
+                    "OSA_DATAHORAFINAL": "30/09/2026 15:04:00",
+                    "OSA_SERVICOEXECUTADO": ""
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1283",
+            "CLI_RAZAO": "João Marcos Teste ",
+            "CLI_TELEFONE": "U2FsdGVkX1/+PksdpErYqPcmzk6rEoqCv+wzUk+Y9hA=",
+            "CLI_EMAIL": "joaomarcos@tdp.com.br"
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2178",
+              "OS_DATA": "30/09/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": null,
+              "OS_DEFEITO": "Limpeza no ar ",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 100.00",
+              "OS_DATAAGENDAMENTO": "05/10/2026",
+              "OS_PERIODOAGENDAMENTO": "11:55",
+              "OSS_DESCRICAO": "Fechada",
+              "REP_NOME": "Antonio"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 100.00",
+                "Subtotal_Item": "R$ 100.00",
+                "PRO_DESCRICAO": "PRESTAÇÃO DE SERVIÇO",
+                "atendimentos": [],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": null
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 100.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 100.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "Antonio"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        },
+        {
+          "tomador": {
+            "CLI_CODIGO": "1250",
+            "CLI_RAZAO": "veronezi",
+            "CLI_TELEFONE": null,
+            "CLI_EMAIL": null
+          },
+          "ordemServico": {
+            "dados": {
+              "OS_SERVICO": "2179",
+              "OS_DATA": "07/10/2026",
+              "OS_HORACONTATO": null,
+              "OS_DESCRICAO": "teste mapa",
+              "OS_DEFEITO": "n funcniona  o mapa",
+              "OS_DATAENTREGA": null,
+              "OS_HORAENTREGA": null,
+              "OS_VALOR": "R$ 0.00",
+              "OS_DATAAGENDAMENTO": "07/10/2026",
+              "OS_PERIODOAGENDAMENTO": "14:28",
+              "OSS_DESCRICAO": "Aberto ",
+              "REP_NOME": "01 - TDP"
+            },
+            "itens": [
+              {
+                "OSI_QTDE": "1.000000",
+                "OSI_VALOR": "R$ 0.00",
+                "Subtotal_Item": "R$ 0.00",
+                "PRO_DESCRICAO": "SERVIÇOS PRESTADOS NA O.S.",
+                "atendimentos": [
+                  {
+                    "OSA_DATAHORAINICIAL": "07/10/2026 14:28:00",
+                    "OSA_DATAHORAFINAL": "07/10/2026 14:28:00",
+                    "OSA_SERVICOEXECUTADO": "teste mapa"
+                  }
+                ],
+                "tipo": "S",
+                "OSI_DESCRICAOSERVICO": "SERVIÇOS PRESTADOS NA O.S."
+              }
+            ],
+            "subtotais": {
+              "servico": "R$ 0.00",
+              "produto": "R$ 0.00",
+              "total": "R$ 0.00"
+            },
+            "vencimentos": [],
+            "tecnicos": [
+              {
+                "REP_NOME": "01 - TDP"
+              }
+            ],
+            "totalVencimentos": "R$ 0.00"
+          }
+        }
+      ]
+    }
+  }
+]

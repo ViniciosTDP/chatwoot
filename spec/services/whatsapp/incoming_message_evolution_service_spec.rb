@@ -98,7 +98,10 @@ describe Whatsapp::IncomingMessageEvolutionService do
       expect(Message.last.message_type).to eq('activity')
     end
 
-    it 'handles contacts.upsert when data is an array' do
+    it 'fills the WhatsApp name of an existing contact from contacts.upsert without creating contacts' do
+      contact = create(:contact, account: inbox.account, name: '+5511888777666', phone_number: '+5511888777666')
+      create(:contact_inbox, inbox: inbox, contact: contact, source_id: '5511888777666')
+
       params = {
         event: 'contacts.upsert',
         data: [
@@ -111,9 +114,28 @@ describe Whatsapp::IncomingMessageEvolutionService do
 
       expect do
         described_class.new(inbox: inbox, params: params).perform
-      end.to change(ContactInbox, :count).by(1)
+      end.not_to change(Contact, :count)
 
-      expect(inbox.contact_inboxes.find_by(source_id: '5511888777666').contact.name).to eq('Bob')
+      expect(contact.reload.name).to eq('Bob')
+    end
+
+    it 'keeps a contact name set by an agent when contacts.update brings the WhatsApp name' do
+      contact = create(:contact, account: inbox.account, name: 'Cliente VIP', phone_number: '+5511888777666')
+      create(:contact_inbox, inbox: inbox, contact: contact, source_id: '5511888777666')
+
+      params = {
+        event: 'contacts.update',
+        data: [
+          {
+            remoteJid: '5511888777666@s.whatsapp.net',
+            pushName: 'Bob'
+          }
+        ]
+      }
+
+      described_class.new(inbox: inbox, params: params).perform
+
+      expect(contact.reload.name).to eq('Cliente VIP')
     end
 
     it 'resolves @lid senders using remoteJidAlt' do
@@ -136,6 +158,27 @@ describe Whatsapp::IncomingMessageEvolutionService do
       message = Message.find_by(source_id: 'EVO_LID_1')
       expect(message.content).to eq('Olá')
       expect(inbox.contact_inboxes.find_by(source_id: '5511933579244')).to be_present
+    end
+
+    it 'does not store a @lid as the contact phone number when no phone jid is available' do
+      params = {
+        event: 'messages.upsert',
+        data: {
+          key: {
+            remoteJid: '268233793904672@lid',
+            fromMe: false,
+            id: 'EVO_LID_2'
+          },
+          pushName: 'Lucas',
+          message: { conversation: 'Olá' }
+        }
+      }
+
+      described_class.new(inbox: inbox, params: params).perform
+
+      contact = inbox.contact_inboxes.find_by(source_id: 'LD.268233793904672')&.contact
+      expect(contact.phone_number).to be_nil
+      expect(contact.additional_attributes['evolution_lid']).to be(true)
     end
 
     it 'attaches audio when webhook includes base64' do

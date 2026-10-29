@@ -5,6 +5,11 @@ ___
 
 # Chatwoot
 
+Para executar o Inpera Chat localmente, use `docker-compose.local.yml` e acesse
+`http://localhost:3025`. O exemplo de produção é `docker-compose.production.inpera.yml`,
+com as variáveis de `.env.production.inpera.example`.
+Consulte o [guia Docker da Inpera](docs/inpera/DOCKER.md) para configuração e comandos.
+
 The modern customer support platform, an open-source alternative to Intercom, Zendesk, Salesforce Service Cloud etc.
 
 <p>

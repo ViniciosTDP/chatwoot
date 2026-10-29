@@ -1,0 +1,38 @@
+{
+  "id": 88,
+  "content": null,
+  "inbox_id": 57,
+  "echo_id": "c8f379664b7e",
+  "conversation_id": 7,
+  "message_type": 1,
+  "content_type": "text",
+  "status": "sent",
+  "content_attributes": {},
+  "created_at": 1784832797,
+  "private": false,
+  "source_id": null,
+  "sender": {
+    "id": 1,
+    "name": "John",
+    "available_name": "John",
+    "avatar_url": "",
+    "type": "user",
+    "availability_status": "online",
+    "thumbnail": ""
+  },
+  "attachments": [
+    {
+      "id": 20,
+      "message_id": 88,
+      "file_type": "image",
+      "account_id": 1,
+      "extension": "png",
+      "content_type": "image/png",
+      "data_url": "http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e6acb4b48344a69194d53d72699826028bf6c3c2/Inpera.png",
+      "thumb_url": "http://localhost:3000/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e6acb4b48344a69194d53d72699826028bf6c3c2/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--5206361ab8dcd15dca0853e0eeb5828ee2d4e3d9/Inpera.png",
+      "file_size": 965,
+      "width": null,
+      "height": null
+    }
+  ]
+}

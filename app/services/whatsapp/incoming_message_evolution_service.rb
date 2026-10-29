@@ -159,12 +159,9 @@ class Whatsapp::IncomingMessageEvolutionService
       jid = jid_from_payload(contact_data[:remoteJid], contact_data[:remoteJidAlt]) || contact_data[:id]
       next if jid.blank?
 
-      _ci, contact = resolve_contact(jid, contact_data[:pushName] || contact_data[:name])
-      next if contact.blank?
-
-      attrs = {}
-      attrs[:name] = contact_data[:pushName] || contact_data[:name] if (contact_data[:pushName] || contact_data[:name]).present?
-      contact.update!(attrs) if attrs.present?
+      # Contact list events fire for the whole address book, so they must never create contacts.
+      contact = find_existing_contact(contact_identifier_from_jid(jid))
+      apply_whatsapp_name(contact, contact_data[:pushName].presence || contact_data[:name])
     end
   end
 
@@ -224,28 +221,47 @@ class Whatsapp::IncomingMessageEvolutionService
     contact_inbox = inbox.contact_inboxes.find_by(source_id: identifier)
     if contact_inbox
       contact = contact_inbox.contact
-      contact.update(name: push_name) if push_name.present? && contact.name.blank?
+      apply_whatsapp_name(contact, push_name)
       return [contact_inbox, contact]
     end
 
-    contact = inbox.account.contacts.find_by(identifier: identifier) ||
-              inbox.account.contacts.find_by(phone_number: phone_e164(identifier))
-
-    if contact.blank?
-      contact = inbox.account.contacts.create!(
-        name: push_name.presence || identifier,
-        phone_number: group_jid?(jid) || identifier.to_s.start_with?('EV.') ? nil : phone_e164(identifier),
-        identifier: identifier,
-        additional_attributes: if group_jid?(jid) || identifier.to_s.start_with?('EV.')
-                                 { 'evolution_group' => true, 'jid' => jid }
-                               else
-                                 { 'jid' => jid }
-                               end
-      )
-    end
-
+    contact = find_existing_contact(identifier) || create_contact(identifier, jid, push_name)
     contact_inbox = inbox.contact_inboxes.create!(contact: contact, source_id: identifier)
     [contact_inbox, contact]
+  end
+
+  def find_existing_contact(identifier)
+    return if identifier.blank?
+
+    contact = inbox.account.contacts.find_by(identifier: identifier)
+    return contact if contact.present?
+
+    phone = phone_e164(identifier)
+    inbox.account.contacts.find_by(phone_number: phone) if phone.present?
+  end
+
+  def create_contact(identifier, jid, push_name)
+    inbox.account.contacts.create!(
+      name: push_name.presence || identifier,
+      phone_number: group_jid?(jid) || lid_jid?(jid) ? nil : phone_e164(identifier),
+      identifier: identifier,
+      additional_attributes: contact_attributes_for(jid)
+    )
+  end
+
+  def contact_attributes_for(jid)
+    return { 'evolution_group' => true, 'jid' => jid } if group_jid?(jid)
+    return { 'evolution_lid' => true, 'jid' => jid } if lid_jid?(jid)
+
+    { 'jid' => jid }
+  end
+
+  # WhatsApp profile names must never overwrite a name set by an agent.
+  def apply_whatsapp_name(contact, name)
+    return if contact.blank? || name.blank?
+    return unless contact.name.blank? || contact.name.to_s.match?(/\A\+?[\d\s()-]+\z/)
+
+    contact.update!(name: name.to_s)
   end
 
   def find_or_create_conversation(contact, contact_inbox, jid)
@@ -266,6 +282,7 @@ class Whatsapp::IncomingMessageEvolutionService
     raw = jid.to_s.split('@').first.presence
     return if raw.blank?
     return "EV.#{raw}" if group_jid?(jid)
+    return "LD.#{raw}" if lid_jid?(jid)
 
     raw
   end
@@ -295,8 +312,12 @@ class Whatsapp::IncomingMessageEvolutionService
     jid.to_s.end_with?('@g.us') || jid.to_s.start_with?('EV.')
   end
 
+  def lid_jid?(jid)
+    jid.to_s.end_with?('@lid')
+  end
+
   def phone_e164(identifier)
-    return if identifier.to_s.start_with?('EV.')
+    return if identifier.to_s.start_with?('EV.', 'LD.')
 
     digits = identifier.to_s.gsub(/\D/, '')
     return if digits.blank?

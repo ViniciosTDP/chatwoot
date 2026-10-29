@@ -12,7 +12,7 @@ ARG PNPM_VERSION="10.2.0"
 ENV PNPM_VERSION ${PNPM_VERSION}
 ENV RUBY_CONFIGURE_OPTS=--disable-install-doc
 
-# Update args in docker-compose.yaml to set the UID/GID of the "vscode" user.
+# Update args in .devcontainer/docker-compose.yml to set the UID/GID of the "vscode" user.
 RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
         groupmod --gid $USER_GID vscode \
         && usermod --uid $USER_UID --gid $USER_GID vscode \
