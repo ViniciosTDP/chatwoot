@@ -1,9 +1,8 @@
 name: Inpera - Sync upstream Chatwoot
 
+# Releases entram por tag (bin/sync_upstream_branches.sh). O sync semanal de
+# develop foi desativado: este workflow roda apenas por workflow_dispatch.
 on:
-  schedule:
-    # Mondays at 06:00 UTC
-    - cron: '0 6 * * 1'
   workflow_dispatch:
     inputs:
       create_inpera_pr:
@@ -139,26 +138,26 @@ jobs:
             --head "${{ steps.merge.outputs.branch }}" \
             --title "chore: sync inpera_chat with upstream (via develop)" \
             --body "$(cat <<EOF
-## Summary
-Automated sync from \`develop\` (upstream mirror) into \`inpera_chat\`.
+          ## Summary
+          Automated sync from \`develop\` (upstream mirror) into \`inpera_chat\`.
 
-Upstream develop SHA: \`${{ needs.sync-develop.outputs.develop_sha }}\`
+          Upstream develop SHA: \`${{ needs.sync-develop.outputs.develop_sha }}\`
 
-## Commits included
-\`\`\`
-${{ steps.check.outputs.commits }}
-\`\`\`
+          ## Commits included
+          \`\`\`
+          ${{ steps.check.outputs.commits }}
+          \`\`\`
 
-## Review checklist
-- [ ] Evolution API files intact (\`evolution_api\` provider, webhooks, services)
-- [ ] Inpera branding preserved where applicable
-- [ ] WhatsApp Cloud / embedded signup upstream fixes retained in shared files
+          ## Review checklist
+          - [ ] Evolution API files intact (\`evolution_api\` provider, webhooks, services)
+          - [ ] Inpera branding preserved where applicable
+          - [ ] WhatsApp Cloud / embedded signup upstream fixes retained in shared files
 
-## Test plan
-- [ ] Run Evolution specs: \`bundle exec rspec spec/services/whatsapp/**/*evolution* spec/controllers/webhooks/evolution*\`
-- [ ] Smoke test Evolution inbox connection and message flow
-EOF
-)"
+          ## Test plan
+          - [ ] Run Evolution specs: \`bundle exec rspec spec/services/whatsapp/**/*evolution* spec/controllers/webhooks/evolution*\`
+          - [ ] Smoke test Evolution inbox connection and message flow
+          EOF
+          )"
 
       - name: Open issue when merge conflicts
         if: steps.check.outputs.behind == 'true' && steps.merge.outputs.status == 'conflict'
@@ -167,28 +166,28 @@ EOF
         run: |
           title="Manual sync required: develop -> inpera_chat ($(date -u +%Y-%m-%d))"
           body="$(cat <<EOF
-Automated sync could not merge \`develop\` into \`inpera_chat\` due to conflicts.
+          Automated sync could not merge \`develop\` into \`inpera_chat\` due to conflicts.
 
-**Conflicted files:** \`${{ steps.merge.outputs.conflicted }}\`
+          **Conflicted files:** \`${{ steps.merge.outputs.conflicted }}\`
 
-## Commits waiting to merge
-\`\`\`
-${{ steps.check.outputs.commits }}
-\`\`\`
+          ## Commits waiting to merge
+          \`\`\`
+          ${{ steps.check.outputs.commits }}
+          \`\`\`
 
-## Manual resolution
-\`\`\`bash
-git fetch origin
-git checkout inpera_chat
-git merge origin/develop
-# resolve conflicts (keep Evolution API + Inpera branding)
-git push origin inpera_chat
-\`\`\`
+          ## Manual resolution
+          \`\`\`bash
+          git fetch origin
+          git checkout inpera_chat
+          git merge origin/develop
+          # resolve conflicts (keep Evolution API + Inpera branding)
+          git push origin inpera_chat
+          \`\`\`
 
-Or run locally:
-\`\`\`bash
-bin/sync_upstream_branches.sh
-\`\`\`
-EOF
-)"
+          Or run locally:
+          \`\`\`bash
+          bin/sync_upstream_branches.sh --develop
+          \`\`\`
+          EOF
+          )"
           gh issue create --title "$title" --body "$body"
