@@ -3,7 +3,7 @@
 > Os passos de migração abaixo são históricos. O script de deploy antigo citado
 > nesses passos foi removido. Para atualizações atuais, use
 > [Deploy_Prod.sh](Deploy_Prod.sh) no Git Bash do PC:
-> `cd /c/projetos-inpera/chatwoot && bash temp/Deploy_Prod.sh`.
+> `cd /c/projetos-inpera/inpera-chat && bash temp/Deploy_Prod.sh`.
 
 **Status (ago/2026): concluída.** DNS `chat.inpera.com.br` aponta para `129.121.37.112`. Chatwoot, Evolution e Sidekiq rodam no HostGator via `docker-compose.production.inpera.yml`. Containers da MacroMind (`192.159.110.58`) foram **parados**.
 
@@ -114,7 +114,7 @@ Pronto quando aparecer versão do Docker, Compose, e `Swap: 2.0Gi` no `free -h`.
 
 ### 2.1 Enviar arquivos de config (não a imagem ainda)
 
-Do PC, a partir de `C:/projetos-inpera/chatwoot/chatwoot`:
+Do PC, a partir de `C:/projetos-inpera/inpera-chat`:
 
 ```bash
 "$PSCP" -P 22022 -batch -hostkey "$HG_HOSTKEY" -pw "$HG_PW" \

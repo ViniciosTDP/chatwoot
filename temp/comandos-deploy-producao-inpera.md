@@ -2,7 +2,7 @@
 
 > Documento histórico do ambiente Macromind. O script de deploy antigo citado
 > abaixo foi removido. Para atualizar a produção atual no HostGator, execute no
-> Git Bash do PC: `cd /c/projetos-inpera/chatwoot && bash temp/Deploy_Prod.sh`.
+> Git Bash do PC: `cd /c/projetos-inpera/inpera-chat && bash temp/Deploy_Prod.sh`.
 > Consulte [a migração para HostGator](migracao-macromind-hostgator.md).
 
 Guia dos comandos usados pelos agentes para subir/atualizar o Chatwoot Inpera no VPS de produção/homolog.
@@ -62,7 +62,7 @@ Arquivos relevantes no repo:
 Diretório de trabalho local:
 
 ```bash
-cd C:/projetos-inpera/chatwoot/chatwoot
+cd C:/projetos-inpera/inpera-chat
 ```
 
 ---
@@ -72,7 +72,7 @@ cd C:/projetos-inpera/chatwoot/chatwoot
 ### 1) Conferir git e (se pedido) commit/push
 
 ```bash
-cd C:/projetos-inpera/chatwoot/chatwoot
+cd C:/projetos-inpera/inpera-chat
 git status
 git branch -vv
 git log --oneline -8
@@ -97,7 +97,7 @@ plink -ssh -batch -pw "$SSH_PW" ubuntu@192.159.110.58 \
 ### 3) Build da imagem no PC (linux/amd64)
 
 ```bash
-cd C:/projetos-inpera/chatwoot/chatwoot
+cd C:/projetos-inpera/inpera-chat
 
 GIT_SHA=$(git rev-parse HEAD)
 echo "Building with GIT_SHA=$GIT_SHA"

@@ -32,6 +32,20 @@ if [ ! -d node_modules ] || [ ! -f node_modules/.pnpm/lock.yaml ]; then
   pnpm install
 fi
 
+# Volume/banco novo deixa o Postgres sem dados: o prepare então roda schema:load +
+# seed e parece que a base "sumiu". Avisa antes, no mesmo log do app.
+db_name="${POSTGRES_DATABASE:-chatwoot_dev}"
+has_accounts="$(PGPASSWORD="${POSTGRES_PASSWORD:-}" psql -h "${POSTGRES_HOST:-postgres}" -U "${POSTGRES_USERNAME:-postgres}" -d "$db_name" \
+  -tAc "select count(*) from information_schema.tables where table_schema='public' and table_name='accounts'" 2>/dev/null || true)"
+if [ "$has_accounts" = "1" ]; then
+  echo "==> Banco '${db_name}' com dados de aplicação."
+else
+  echo "AVISO: o banco '${db_name}' subiu sem dados de aplicação (sem tabela accounts)."
+  echo "       Se esperava dados: confira se o projeto Compose é 'inpera-chat' (name: no compose)"
+  echo "       e se o volume postgres_data é o certo: docker volume ls | grep inpera-chat"
+  echo "       O db:chatwoot_prepare abaixo vai rodar schema:load + seed (normal na 1ª instalação)."
+fi
+
 echo "==> Preparando banco de dados..."
 bundle exec rails db:chatwoot_prepare
 

@@ -75,7 +75,7 @@ Na VM, o caminho esperado é o mesmo do deploy:
 
 ### Enviar do PC (Windows) para o VPS
 
-No PC, a partir de `C:/projetos-inpera/chatwoot/chatwoot`:
+No PC, a partir de `C:/projetos-inpera/inpera-chat`:
 
 ```bash
 plink -ssh -batch -pw "$SSH_PW" ubuntu@192.159.110.58 \

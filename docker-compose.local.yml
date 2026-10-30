@@ -1,3 +1,7 @@
+# Nome do projeto Compose fixo: renomear/mover a pasta do checkout não pode criar
+# um conjunto novo de volumes (postgres_data vazio = banco "zerado").
+name: inpera-chat
+
 services:
   pdf:
     build:

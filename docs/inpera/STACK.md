@@ -10,7 +10,7 @@ Em conflito, os manifestos vencem este documento.
 - Remotes: `origin` = `https://github.com/ViniciosTDP/chatwoot.git`; `upstream` = `chatwoot/chatwoot`.
 - Branch protegida: **`inpera_chat`** (espelha produção). Nunca editar nela, nem em `master`/`main`/`development`.
   Antes de qualquer edição: `git status --short --branch` no repositório correto e troca para branch de trabalho (`feat/`, `fix/`, `create/`).
-- Checkout único: `C:\projetos-inpera\chatwoot\chatwoot`. Versionar tarefas por branches nesse diretório; não criar worktrees, clones ou cópias adicionais sem pedido explícito do usuário.
+- Checkout único: `C:\projetos-inpera\inpera-chat`. Versionar tarefas por branches nesse diretório; não criar worktrees, clones ou cópias adicionais sem pedido explícito do usuário.
 - Coordenar agentes concorrentes antes de editar arquivos sobrepostos ou trocar de branch. Preservar alterações pendentes e os relatórios PDF/CSV; não descartar nem executar stash automático.
 
 ## 2. Runtime e ferramentas

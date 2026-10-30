@@ -6,18 +6,18 @@ SLA exige Enterprise e administrador; as demais exportações usam as permissõe
 
 ## Ambiente local
 
-Execute os comandos no checkout único `C:\projetos-inpera\chatwoot\chatwoot`.
+Execute os comandos no checkout único `C:\projetos-inpera\inpera-chat`.
 Utilize seu `.env.docker` existente; o Compose fornece um token exclusivamente de desenvolvimento.
 Os relatórios PDF/CSV e a configuração local foram preservados na consolidação dos worktrees. Não copie configurações de diretórios antigos sobre o checkout principal.
 
 ```powershell
-Set-Location C:\projetos-inpera\chatwoot\chatwoot
-docker compose -p chatwoot -f docker-compose.local.yml up -d --build
-docker compose -p chatwoot -f docker-compose.local.yml logs -f pdf report-worker
+Set-Location C:\projetos-inpera\inpera-chat
+docker compose -f docker-compose.local.yml up -d --build
+docker compose -f docker-compose.local.yml logs -f pdf report-worker
 ```
 
 O serviço PDF não publica portas. O container app executa as migrations no fluxo local existente.
-Para reutilizar a instalação local anterior e seus volumes, use o mesmo nome de projeto Compose: normalmente `docker compose -p chatwoot -f docker-compose.local.yml up -d --build`. Evite subir dois projetos simultaneamente nas mesmas portas.
+O `docker-compose.local.yml` fixa `name: inpera-chat`, então o nome do projeto vem do arquivo e não mais da pasta: mover ou renomear o checkout não cria volumes novos. Não passe `-p` com outro nome — isso aponta o stack para outro conjunto de volumes e o banco aparece vazio. Evite subir dois projetos simultaneamente nas mesmas portas.
 O report-worker reutiliza a imagem e o volume de gems do app, mas atende exclusivamente a fila `report_exports`, com concorrência 1.
 
 Não é necessário preencher credenciais PDF no `.env.docker` para o teste local: o Compose já aplica o mesmo token de desenvolvimento ao PDF e ao worker. A mensagem `generation_failed` também pode indicar erro na preparação dos dados, antes da chamada ao PDF; consulte os logs do report-worker.
@@ -32,11 +32,11 @@ PDF_SERVICE_URL=http://pdf:3005
 ```
 
 Gere o token com `openssl rand -hex 32`. Não versionar credenciais.
-O script externo `../temp/Deploy_Prod.sh` foi adaptado para construir/empacotar as duas imagens, enviar o Compose, executar migrations e iniciar PDF e report-worker.
+O script `temp/Deploy_Prod.sh` foi adaptado para construir/empacotar as duas imagens, enviar o Compose, executar migrations e iniciar PDF e report-worker.
 No Git Bash, o script usa o checkout único por padrão:
 
 ```bash
-bash /c/projetos-inpera/chatwoot/temp/Deploy_Prod.sh
+bash /c/projetos-inpera/inpera-chat/temp/Deploy_Prod.sh
 ```
 
 `--skip-build` exige ambas as imagens já construídas; `--skip-pack` exige um pacote contendo ambas.

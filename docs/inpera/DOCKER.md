@@ -1,6 +1,6 @@
 # Docker do Inpera Chat
 
-Execute os comandos no checkout único `C:\projetos-inpera\chatwoot\chatwoot`,
+Execute os comandos no checkout único `C:\projetos-inpera\inpera-chat`,
 onde está o `docker-compose.local.yml`. O container monta o código desse diretório;
 as tarefas são versionadas por branches, sem criar outros checkouts.
 
@@ -23,7 +23,7 @@ Inicie o Docker Desktop com containers Linux. No PowerShell, entre no checkout
 principal:
 
 ```powershell
-Set-Location C:\projetos-inpera\chatwoot\chatwoot
+Set-Location C:\projetos-inpera\inpera-chat
 ```
 
 Se já existir `.env.docker`, mantenha sua configuração. Em um checkout novo, copie
@@ -58,10 +58,11 @@ docker compose -f docker-compose.local.yml ps
 docker compose -f docker-compose.local.yml down
 ```
 
-Mantenha o caminho do checkout e o nome do projeto Compose para reutilizar os
-volumes locais. Coordene trocas de branch com outros agentes e processos em
-execução; todos compartilham os arquivos montados pelo container. Não remova
-volumes de projetos antigos durante a consolidação dos arquivos.
+O `docker-compose.local.yml` fixa `name: inpera-chat`, então o nome do projeto vem
+do arquivo e mover o checkout não cria volumes novos. Não passe `-p` com outro
+nome. Mantenha os volumes locais. Coordene trocas de branch com outros agentes e
+processos em execução; todos compartilham os arquivos montados pelo container.
+Não remova volumes de projetos antigos durante a consolidação dos arquivos.
 
 ## Produção
 
@@ -71,7 +72,7 @@ no servidor. A imagem customizada `chatwoot-inpera:prod` precisa estar disponív
 antes do deploy; esse Compose não faz o build da imagem.
 
 O arquivo de produção permanece com o mesmo nome porque é usado por
-`../temp/Deploy_Prod.sh` e `bin/install_nginx_ssl_inpera_chat.sh`. Ele contém
+`temp/Deploy_Prod.sh` e `bin/install_nginx_ssl_inpera_chat.sh`. Ele contém
 limites de memória para o ambiente Inpera e não substitui o Compose local.
 
 O template `.env.example` permanece como catálogo geral das variáveis do Chatwoot.

@@ -2,18 +2,24 @@
 # Atualiza Chatwoot Inpera em produção (fluxo completo por padrão).
 #
 #   bash temp/Deploy_Prod.sh
-#   O código padrão está em chatwoot (checkout único do INPERA Chat).
+#   O código padrão é a pasta acima de temp/ (a raiz deste checkout).
 #   Para outra pasta: REPO_DIR=/c/caminho/do/repo bash temp/Deploy_Prod.sh
 #
-# Sem flag: build + empacotar + upload + load + migration + subir + health.
+# Sem flag: build + empacotar + upload + load + backup do banco + preflight + migration + subir + health.
 # Flags só pulam etapa:
 #   --skip-build       não faz docker build (usa chatwoot-inpera:prod local)
 #   --skip-pack        não faz docker save/gzip (usa o .tar.gz já em /tmp/inpera-deploy)
 #   --skip-upload      não para o VPS nem envia/carrega imagem (já está no servidor)
-#   --skip-migration   não roda db:chatwoot_prepare no VPS
+#   --skip-migration   não roda backup/preflight nem db:chatwoot_prepare no VPS
 #   --skip-health      não espera HTTP nem imprime logs finais
 #   --only-up          só sobe PDF/rails/sidekiq/report-worker + health (atalho após falha no compose)
 #   --yes / -y         não pede confirmação
+#   --allow-empty-db   segue mesmo com o Postgres vazio/novo (apenas na primeira instalação)
+#
+# Antes de db:chatwoot_prepare o script faz pg_dump -Fc do banco do Chatwoot (e do
+# Evolution, se existir) em /root/backups/inpera-chat e aborta se o banco estiver
+# vazio: é a proteção contra subir apontando para um projeto Compose/volume novo,
+# quando o prepare faz schema:load + seed e parece que os dados sumiram.
 #
 # No HostGator use sempre "docker compose" (v2, espaço). O "docker-compose"
 # (v1.29) quebra com KeyError: ContainerConfig ao recriar postgres/redis.
@@ -33,7 +39,7 @@ SSH_KEY="${SSH_KEY:-/c/Users/IA2/Documents/ImportanteNaoApagar/Putty_HostGator_I
 SSH_HOSTKEY="SHA256:sE8lU2eSJh37+kXkEs97kJ2iQQL6ZdGkVZfUfja5DIU"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="${REPO_DIR:-${SCRIPT_DIR}/../chatwoot}"
+REPO_DIR="${REPO_DIR:-${SCRIPT_DIR}/..}"
 REMOTE_DIR="/root/chatwoot"
 REMOTE_TAR="/root/chatwoot-inpera-prod.tar.gz"
 COMPOSE_FILE="docker-compose.production.inpera.yml"
@@ -42,6 +48,9 @@ PDF_IMAGE_NAME="chatwoot-report-pdf:prod"
 TAR_NAME="chatwoot-inpera-prod.tar.gz"
 LOCAL_TAR_DIR="/tmp/inpera-deploy"
 HEALTH_URL="https://chat.inpera.com.br/"
+# Backup de banco antes de cada migration; fica fora dos volumes Docker.
+REMOTE_BACKUP_DIR="/root/backups/inpera-chat"
+BACKUP_RETENTION_DAYS="14"
 # Rails no HostGator fica em 127.0.0.1:3000 (Nginx na frente). Checagem via SSH.
 
 PLINK="${PLINK:-/c/Program Files/PuTTY/plink.exe}"
@@ -60,9 +69,10 @@ SKIP_UPLOAD=0
 SKIP_MIGRATION=0
 SKIP_HEALTH=0
 ASSUME_YES=0
+ALLOW_EMPTY_DB=0
 
 usage() {
-  sed -n '2,16p' "$0"
+  sed -n '2,22p' "$0"
 }
 
 for arg in "$@"; do
@@ -79,6 +89,7 @@ for arg in "$@"; do
       SKIP_MIGRATION=1
       ;;
     --yes|-y)          ASSUME_YES=1 ;;
+    --allow-empty-db)  ALLOW_EMPTY_DB=1 ;;
     -h|--help)
       usage
       exit 0
@@ -97,6 +108,14 @@ RST=$'\033[0m'
 log() { echo ""; echo "==> $*"; }
 err() { printf '%s\n' "${RED}$*${RST}" >&2; }
 die() { err "ERROR: $*"; exit 1; }
+
+# Aborta o deploy sem deixar a aplicação parada no meio do processo.
+abort_after_stop() {
+  err "Religando rails/sidekiq/report-worker com a imagem atual..."
+  ssh_vps "cd ${REMOTE_DIR} && docker compose -f ${COMPOSE_FILE} up -d --no-deps rails sidekiq report-worker" \
+    || err "Não consegui religar sozinho. Suba com: cd ${REMOTE_DIR} && docker compose -f ${COMPOSE_FILE} up -d --no-deps rails sidekiq report-worker"
+  die "$@"
+}
 
 fail_banner() {
   err "============================================================"
@@ -272,8 +291,9 @@ confirm() {
   echo "  1) build        $(step_label "$SKIP_BUILD")"
   echo "  2) empacotar    $(step_label "$SKIP_PACK")"
   echo "  3) upload/load  $(step_label "$SKIP_UPLOAD")"
-  echo "  4) migration    $(step_label "$SKIP_MIGRATION")"
-  echo "  5) subir app    RODAR"
+  echo "  4) backup DB    $(step_label "$SKIP_MIGRATION")"
+  echo "  5) migration    $(step_label "$SKIP_MIGRATION")"
+  echo "  6) subir app    RODAR"
   echo "  watchdog     stall ${BUILD_STALL_SECS}s / teto ${BUILD_MAX_SECS}s / retries ${BUILD_RETRIES}"
   if [[ "$ASSUME_YES" == "1" ]]; then
     return 0
@@ -401,6 +421,62 @@ fi
 if [[ "$SKIP_MIGRATION" == "1" ]]; then
   log "Pulando migration (--skip-migration)"
 else
+  # ---------------------------------------------------------------------------
+  # Backup + preflight do banco: roda antes de qualquer task que escreve no DB.
+  # Um volume/projeto Compose novo deixa o Postgres vazio; o prepare então faz
+  # schema:load + seed e o banco "zera". Aqui isso aborta antes de acontecer.
+  # ---------------------------------------------------------------------------
+  log "Preflight do banco no VPS"
+  set +e
+  preflight_out="$(ssh_vps "set -e
+cd ${REMOTE_DIR}
+docker compose -f ${COMPOSE_FILE} up -d postgres >/dev/null
+PGUSER=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres printenv POSTGRES_USER)
+PGDB=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres printenv POSTGRES_DB)
+HAS_ACCOUNTS=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres psql -U \"\$PGUSER\" -d \"\$PGDB\" -tAc \"select count(*) from information_schema.tables where table_schema='public' and table_name='accounts'\") || exit 12
+echo \"banco=\$PGDB usuario=\$PGUSER tabela_accounts=\$HAS_ACCOUNTS\"
+[ \"\$HAS_ACCOUNTS\" = \"1\" ] || exit 10
+COUNTS=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres psql -U \"\$PGUSER\" -d \"\$PGDB\" -tAc \"select (select count(*) from accounts) || '/' || (select count(*) from conversations) || '/' || (select count(*) from messages)\") || exit 12
+echo \"accounts/conversations/messages=\$COUNTS\"
+case \"\$COUNTS\" in 0/*) exit 11 ;; esac
+")"
+  preflight_rc=$?
+  set -e
+  if [[ -n "$preflight_out" ]]; then
+    printf '%s\n' "$preflight_out"
+  fi
+
+  if [[ "$preflight_rc" -ne 0 ]]; then
+    case "$preflight_rc" in
+      10) err "Preflight: o banco não tem a tabela accounts (Postgres vazio ou volume novo)." ;;
+      11) err "Preflight: o banco existe mas está com 0 accounts." ;;
+      *)  err "Preflight: não consegui consultar o Postgres (exit ${preflight_rc})." ;;
+    esac
+    if [[ "$ALLOW_EMPTY_DB" != "1" || "$preflight_rc" -gt 11 ]]; then
+      err "Deploy abortado antes de rodar qualquer task de DB. Para primeira instalação use --allow-empty-db."
+      abort_after_stop "Banco de dados vazio ou inacessível; nada foi migrado."
+    fi
+    err "AVISO: banco vazio/novo aceito por --allow-empty-db. Seguindo sem backup."
+  else
+    log "Backup do banco em ${REMOTE_BACKUP_DIR} (pg_dump -Fc)"
+    ssh_vps "set -e
+cd ${REMOTE_DIR}
+BK_DIR=${REMOTE_BACKUP_DIR}
+mkdir -p \"\$BK_DIR\"
+STAMP=\$(date +%Y%m%d_%H%M%S)
+PGUSER=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres printenv POSTGRES_USER)
+PGDB=\$(docker compose -f ${COMPOSE_FILE} exec -T postgres printenv POSTGRES_DB)
+docker compose -f ${COMPOSE_FILE} exec -T postgres pg_dump -U \"\$PGUSER\" -d \"\$PGDB\" -Fc > \"\$BK_DIR/\${PGDB}_\${STAMP}.dump\"
+test -s \"\$BK_DIR/\${PGDB}_\${STAMP}.dump\"
+if docker compose -f ${COMPOSE_FILE} exec -T postgres psql -U \"\$PGUSER\" -d postgres -tAc \"select 1 from pg_database where datname='evolution'\" | grep -qx 1; then
+  docker compose -f ${COMPOSE_FILE} exec -T postgres pg_dump -U \"\$PGUSER\" -d evolution -Fc > \"\$BK_DIR/evolution_\${STAMP}.dump\"
+  test -s \"\$BK_DIR/evolution_\${STAMP}.dump\"
+fi
+find \"\$BK_DIR\" -name '*.dump' -mtime +${BACKUP_RETENTION_DAYS} -delete
+ls -lh \"\$BK_DIR\"
+" || abort_after_stop "Backup do banco falhou; nada foi migrado."
+  fi
+
   log "Rodando db:chatwoot_prepare"
   ssh_vps "set -e
 cd ${REMOTE_DIR}

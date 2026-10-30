@@ -71,7 +71,7 @@
 
 ## INPERA Git Workflow — single checkout
 
-- The only active checkout is `C:/projetos-inpera/chatwoot/chatwoot`. Use branches in this directory for versioning.
+- The only active checkout is `C:/projetos-inpera/inpera-chat`. Use branches in this directory for versioning.
 - Do not create additional worktrees, clones, or source copies for a task unless the user explicitly requests an additional checkout. This INPERA policy replaces the upstream per-task worktree workflow and must survive upstream updates.
 - Before editing, check the repository root, current branch, and working tree status. Keep an existing work branch; when on a protected branch, create or switch to a work branch before implementation.
 - `inpera_chat`, `develop`, `development`, `main`, and `master` are protected. Integrate work into `inpera_chat` only when explicitly authorized; commits, pushes, and production deploys require their own authorization.

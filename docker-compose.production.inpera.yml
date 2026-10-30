@@ -3,6 +3,10 @@
 # Usage on VPS:
 #   docker compose -f docker-compose.production.inpera.yml up -d
 # Docker Compose v2 is required; resource limits work without Swarm.
+#
+# Projeto Compose fixo: o nome deixa de vir da pasta. Renomear /root/chatwoot não
+# pode apontar o stack para um conjunto novo e vazio de volumes (postgres_data).
+name: chatwoot
 
 services:
   pdf:
